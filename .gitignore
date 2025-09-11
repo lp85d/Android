@@ -1,0 +1,7 @@
+# Файлы, которые не должны попасть в Git
+github_token.txt
+log.txt
+.idea/
+.gradle/
+build/
+local.properties
