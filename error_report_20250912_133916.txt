@@ -1,0 +1,76 @@
+🔥 ОБНАРУЖЕНЫ ОШИБКИ КОМПИЛЯЦИИ В GITHUB ACTIONS
+============================================================
+Репозиторий: lp85d/Android
+Workflow: Android CI
+Run #: 85
+Ветка: main
+Коммит: b9b97cd3
+Статус: completed / failure
+Время: 2025-09-12 13:36:18+00:00
+URL: https://github.com/lp85d/Android/actions/runs/17675808518
+
+📋 DEPENDENCY ERROR:
+----------------------------------------
+Строка 28: 2025-09-12T13:36:09.5830305Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+Контекст:
+  2025-09-12T13:36:09.0446852Z Prepare workflow directory
+  2025-09-12T13:36:09.0758134Z Prepare all required actions
+  2025-09-12T13:36:09.0794386Z Getting action download info
+  2025-09-12T13:36:09.5830305Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+  2025-09-12T13:36:09.7778395Z Download action repository 'actions/setup-java@v4' (SHA:c5195efecf7bdfc987ee8bae7a71cb8b11521c00)
+  2025-09-12T13:36:10.4919106Z Download action repository 'gradle/actions@v3' (SHA:d9c87d481d55275bb5441eef3fe0e46805f9ef70)
+
+Строка 29: 2025-09-12T13:36:09.7778395Z Download action repository 'actions/setup-java@v4' (SHA:c5195efecf7bdfc987ee8bae7a71cb8b11521c00)
+Контекст:
+  2025-09-12T13:36:09.0758134Z Prepare all required actions
+  2025-09-12T13:36:09.0794386Z Getting action download info
+  2025-09-12T13:36:09.5830305Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+  2025-09-12T13:36:09.7778395Z Download action repository 'actions/setup-java@v4' (SHA:c5195efecf7bdfc987ee8bae7a71cb8b11521c00)
+  2025-09-12T13:36:10.4919106Z Download action repository 'gradle/actions@v3' (SHA:d9c87d481d55275bb5441eef3fe0e46805f9ef70)
+  2025-09-12T13:36:11.4642865Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+
+Строка 30: 2025-09-12T13:36:10.4919106Z Download action repository 'gradle/actions@v3' (SHA:d9c87d481d55275bb5441eef3fe0e46805f9ef70)
+Контекст:
+  2025-09-12T13:36:09.0794386Z Getting action download info
+  2025-09-12T13:36:09.5830305Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+  2025-09-12T13:36:09.7778395Z Download action repository 'actions/setup-java@v4' (SHA:c5195efecf7bdfc987ee8bae7a71cb8b11521c00)
+  2025-09-12T13:36:10.4919106Z Download action repository 'gradle/actions@v3' (SHA:d9c87d481d55275bb5441eef3fe0e46805f9ef70)
+  2025-09-12T13:36:11.4642865Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+  2025-09-12T13:36:11.6692579Z Complete job name: build
+
+📋 COMPILATION ERROR:
+----------------------------------------
+Строка 155: 2025-09-12T13:36:13.8355019Z ##[warning]Failed to restore gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9: Error: Cache service responded with 400
+Контекст:
+  2025-09-12T13:36:12.6194135Z ##[endgroup]
+  2025-09-12T13:36:13.7611214Z Merged default JDK locations into /home/runner/.m2/toolchains.xml
+  2025-09-12T13:36:13.7613415Z ##[group]Restore Gradle state from cache
+  2025-09-12T13:36:13.8355019Z ##[warning]Failed to restore gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9: Error: Cache service responded with 400
+  2025-09-12T13:36:13.8407870Z Gradle User Home cache not found. Will initialize empty.
+  2025-09-12T13:36:13.8409037Z ##[endgroup]
+
+Строка 179: 2025-09-12T13:36:14.2288470Z ##[warning]Failed to save cache entry with path '/home/runner/.gradle/caches,/home/runner/.gradle/notifications,/home/runner/.gradle/.setup-gradle' and key: gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0ziHEaAAAAADzaXRCbDGyToqlcF8QLsqVQlkzRURHRTA0MTEARWRnZQ==
+Контекст:
+  2025-09-12T13:36:14.1171323Z ##[group]Caching Gradle state
+  2025-09-12T13:36:14.1266665Z Caching Gradle User Home with cache key: gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9
+  2025-09-12T13:36:14.1455684Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/Android/Android --files-from manifest.txt --use-compress-program zstdmt
+  2025-09-12T13:36:14.2288470Z ##[warning]Failed to save cache entry with path '/home/runner/.gradle/caches,/home/runner/.gradle/notifications,/home/runner/.gradle/.setup-gradle' and key: gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0ziHEaAAAAADzaXRCbDGyToqlcF8QLsqVQlkzRURHRTA0MTEARWRnZQ==
+  2025-09-12T13:36:14.2354479Z ##[endgroup]
+  2025-09-12T13:36:14.2358909Z Generating Job Summary
+
+📋 RESOURCE ERROR:
+----------------------------------------
+Строка 156: 2025-09-12T13:36:13.8407870Z Gradle User Home cache not found. Will initialize empty.
+Контекст:
+  2025-09-12T13:36:13.7611214Z Merged default JDK locations into /home/runner/.m2/toolchains.xml
+  2025-09-12T13:36:13.7613415Z ##[group]Restore Gradle state from cache
+  2025-09-12T13:36:13.8355019Z ##[warning]Failed to restore gradle-home-v1|Linux|build[5df42585ae8f8da228c604b8b4e8707c]-b9b97cd30880cebc60ed672617270458741efae9: Error: Cache service responded with 400
+  2025-09-12T13:36:13.8407870Z Gradle User Home cache not found. Will initialize empty.
+  2025-09-12T13:36:13.8409037Z ##[endgroup]
+  2025-09-12T13:36:13.8535843Z ##[group]Run chmod +x gradlew
+
+🔧 РЕКОМЕНДАЦИИ ПО ИСПРАВЛЕНИЮ:
+----------------------------------------
+• Проверьте версии зависимостей и репозитории
+• Исправьте синтаксические ошибки в коде Java/Kotlin
+• Проверьте ресурсы в папках res/
