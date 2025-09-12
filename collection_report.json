@@ -2,14 +2,14 @@
   "source_path": "/home/runner/workspace",
   "collection_time": "/home/runner/workspace",
   "statistics": {
-    "total_files": 17,
-    "total_size": 15634,
+    "total_files": 16,
+    "total_size": 15404,
     "file_types": {
       ".md": 1,
       ".gradle": 3,
       ".properties": 1,
       ".pro": 1,
-      ".xml": 9,
+      ".xml": 8,
       ".java": 1,
       ".yml": 1
     },
@@ -187,12 +187,17 @@
     {
       "path": "app/src/main/res/mipmap-hdpi",
       "full_path": "/home/runner/workspace/app/src/main/res/mipmap-hdpi",
-      "files_count": 2
+      "files_count": 0
     },
     {
       "path": "app/src/main/res/xml",
       "full_path": "/home/runner/workspace/app/src/main/res/xml",
       "files_count": 2
+    },
+    {
+      "path": "app/src/main/res/drawable",
+      "full_path": "/home/runner/workspace/app/src/main/res/drawable",
+      "files_count": 1
     },
     {
       "path": ".github",
@@ -252,21 +257,21 @@
       "name": "AndroidManifest.xml",
       "relative_path": "app/src/main/AndroidManifest.xml",
       "full_path": "/home/runner/workspace/app/src/main/AndroidManifest.xml",
-      "size": 981,
+      "size": 980,
       "extension": ".xml"
     },
     {
       "name": "MainActivity.java",
       "relative_path": "app/src/main/java/com/example/android/MainActivity.java",
       "full_path": "/home/runner/workspace/app/src/main/java/com/example/android/MainActivity.java",
-      "size": 665,
+      "size": 301,
       "extension": ".java"
     },
     {
       "name": "activity_main.xml",
       "relative_path": "app/src/main/res/layout/activity_main.xml",
       "full_path": "/home/runner/workspace/app/src/main/res/layout/activity_main.xml",
-      "size": 778,
+      "size": 1294,
       "extension": ".xml"
     },
     {
@@ -291,20 +296,6 @@
       "extension": ".xml"
     },
     {
-      "name": "ic_launcher.xml",
-      "relative_path": "app/src/main/res/mipmap-hdpi/ic_launcher.xml",
-      "full_path": "/home/runner/workspace/app/src/main/res/mipmap-hdpi/ic_launcher.xml",
-      "size": 419,
-      "extension": ".xml"
-    },
-    {
-      "name": "ic_launcher_round.xml",
-      "relative_path": "app/src/main/res/mipmap-hdpi/ic_launcher_round.xml",
-      "full_path": "/home/runner/workspace/app/src/main/res/mipmap-hdpi/ic_launcher_round.xml",
-      "size": 419,
-      "extension": ".xml"
-    },
-    {
       "name": "backup_rules.xml",
       "relative_path": "app/src/main/res/xml/backup_rules.xml",
       "full_path": "/home/runner/workspace/app/src/main/res/xml/backup_rules.xml",
@@ -316,6 +307,13 @@
       "relative_path": "app/src/main/res/xml/data_extraction_rules.xml",
       "full_path": "/home/runner/workspace/app/src/main/res/xml/data_extraction_rules.xml",
       "size": 376,
+      "extension": ".xml"
+    },
+    {
+      "name": "ic_launcher.xml",
+      "relative_path": "app/src/main/res/drawable/ic_launcher.xml",
+      "full_path": "/home/runner/workspace/app/src/main/res/drawable/ic_launcher.xml",
+      "size": 457,
       "extension": ".xml"
     },
     {
