@@ -2,11 +2,12 @@
   "source_path": "/home/runner/workspace",
   "collection_time": "/home/runner/workspace",
   "statistics": {
-    "total_files": 16,
-    "total_size": 15404,
+    "total_files": 22,
+    "total_size": 55818,
     "file_types": {
       ".md": 1,
       ".gradle": 3,
+      ".txt": 6,
       ".properties": 1,
       ".pro": 1,
       ".xml": 8,
@@ -107,6 +108,11 @@
     {
       "path": "collected_android_files/app/src/main/res/mipmap-hdpi",
       "full_path": "/home/runner/workspace/collected_android_files/app/src/main/res/mipmap-hdpi",
+      "files_count": 0
+    },
+    {
+      "path": "collected_android_files/app/src/main/res/drawable",
+      "full_path": "/home/runner/workspace/collected_android_files/app/src/main/res/drawable",
       "files_count": 0
     },
     {
@@ -231,6 +237,48 @@
       "full_path": "/home/runner/workspace/build.gradle",
       "size": 229,
       "extension": ".gradle"
+    },
+    {
+      "name": "error_report_20250912_145507.txt",
+      "relative_path": "error_report_20250912_145507.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_145507.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_145509.txt",
+      "relative_path": "error_report_20250912_145509.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_145509.txt",
+      "size": 7713,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_145510.txt",
+      "relative_path": "error_report_20250912_145510.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_145510.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_151619.txt",
+      "relative_path": "error_report_20250912_151619.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_151619.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_151621.txt",
+      "relative_path": "error_report_20250912_151621.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_151621.txt",
+      "size": 7713,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_151622.txt",
+      "relative_path": "error_report_20250912_151622.txt",
+      "full_path": "/home/runner/workspace/error_report_20250912_151622.txt",
+      "size": 6247,
+      "extension": ".txt"
     },
     {
       "name": "gradle-wrapper.properties",
