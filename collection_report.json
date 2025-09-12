@@ -1,0 +1,810 @@
+{
+  "source_path": ".",
+  "collection_time": "/home/runner/workspace",
+  "statistics": {
+    "total_files": 97,
+    "total_size": 523744,
+    "file_types": {
+      ".md": 3,
+      ".txt": 75,
+      ".gradle": 7,
+      ".json": 1,
+      ".properties": 1,
+      ".pro": 1,
+      ".xml": 7,
+      ".java": 1,
+      ".yml": 1
+    },
+    "important_files_found": [
+      "settings.gradle",
+      "build.gradle",
+      "collected_android_files/settings.gradle",
+      "collected_android_files/build.gradle",
+      "collected_android_files/collected_android_files/settings.gradle",
+      "collected_android_files/collected_android_files/build.gradle",
+      "app/build.gradle",
+      "app/proguard-rules.pro",
+      "app/src/main/AndroidManifest.xml",
+      "app/src/main/res/values/strings.xml",
+      "app/src/main/res/values/colors.xml"
+    ]
+  },
+  "directories": [
+    {
+      "path": "collected_android_files",
+      "full_path": "collected_android_files",
+      "files_count": 28
+    },
+    {
+      "path": "collected_android_files/collected_android_files",
+      "full_path": "collected_android_files/collected_android_files",
+      "files_count": 29
+    },
+    {
+      "path": "__pycache__",
+      "full_path": "__pycache__",
+      "files_count": 0
+    },
+    {
+      "path": "gradle",
+      "full_path": "gradle",
+      "files_count": 0
+    },
+    {
+      "path": "gradle/wrapper",
+      "full_path": "gradle/wrapper",
+      "files_count": 1
+    },
+    {
+      "path": "app",
+      "full_path": "app",
+      "files_count": 2
+    },
+    {
+      "path": "app/src",
+      "full_path": "app/src",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main",
+      "full_path": "app/src/main",
+      "files_count": 1
+    },
+    {
+      "path": "app/src/main/java",
+      "full_path": "app/src/main/java",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main/java/com",
+      "full_path": "app/src/main/java/com",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main/java/com/example",
+      "full_path": "app/src/main/java/com/example",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main/java/com/example/android",
+      "full_path": "app/src/main/java/com/example/android",
+      "files_count": 1
+    },
+    {
+      "path": "app/src/main/res",
+      "full_path": "app/src/main/res",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main/res/layout",
+      "full_path": "app/src/main/res/layout",
+      "files_count": 1
+    },
+    {
+      "path": "app/src/main/res/values",
+      "full_path": "app/src/main/res/values",
+      "files_count": 3
+    },
+    {
+      "path": "app/src/main/res/mipmap-hdpi",
+      "full_path": "app/src/main/res/mipmap-hdpi",
+      "files_count": 0
+    },
+    {
+      "path": "app/src/main/res/xml",
+      "full_path": "app/src/main/res/xml",
+      "files_count": 2
+    },
+    {
+      "path": ".github",
+      "full_path": ".github",
+      "files_count": 0
+    },
+    {
+      "path": ".github/workflows",
+      "full_path": ".github/workflows",
+      "files_count": 1
+    }
+  ],
+  "files": [
+    {
+      "name": "replit.md",
+      "relative_path": "replit.md",
+      "full_path": "replit.md",
+      "size": 6656,
+      "extension": ".md"
+    },
+    {
+      "name": "error_report_20250912_133914.txt",
+      "relative_path": "error_report_20250912_133914.txt",
+      "full_path": "error_report_20250912_133914.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133915.txt",
+      "relative_path": "error_report_20250912_133915.txt",
+      "full_path": "error_report_20250912_133915.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133916.txt",
+      "relative_path": "error_report_20250912_133916.txt",
+      "full_path": "error_report_20250912_133916.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "settings.gradle",
+      "relative_path": "settings.gradle",
+      "full_path": "settings.gradle",
+      "size": 324,
+      "extension": ".gradle"
+    },
+    {
+      "name": "build.gradle",
+      "relative_path": "build.gradle",
+      "full_path": "build.gradle",
+      "size": 229,
+      "extension": ".gradle"
+    },
+    {
+      "name": "error_report_20250912_134329.txt",
+      "relative_path": "error_report_20250912_134329.txt",
+      "full_path": "error_report_20250912_134329.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134636.txt",
+      "relative_path": "error_report_20250912_134636.txt",
+      "full_path": "error_report_20250912_134636.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134637.txt",
+      "relative_path": "error_report_20250912_134637.txt",
+      "full_path": "error_report_20250912_134637.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134638.txt",
+      "relative_path": "error_report_20250912_134638.txt",
+      "full_path": "error_report_20250912_134638.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135227.txt",
+      "relative_path": "error_report_20250912_135227.txt",
+      "full_path": "error_report_20250912_135227.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135228.txt",
+      "relative_path": "error_report_20250912_135228.txt",
+      "full_path": "error_report_20250912_135228.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135230.txt",
+      "relative_path": "error_report_20250912_135230.txt",
+      "full_path": "error_report_20250912_135230.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135625.txt",
+      "relative_path": "error_report_20250912_135625.txt",
+      "full_path": "error_report_20250912_135625.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135627.txt",
+      "relative_path": "error_report_20250912_135627.txt",
+      "full_path": "error_report_20250912_135627.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135628.txt",
+      "relative_path": "error_report_20250912_135628.txt",
+      "full_path": "error_report_20250912_135628.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140015.txt",
+      "relative_path": "error_report_20250912_140015.txt",
+      "full_path": "error_report_20250912_140015.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140016.txt",
+      "relative_path": "error_report_20250912_140016.txt",
+      "full_path": "error_report_20250912_140016.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140017.txt",
+      "relative_path": "error_report_20250912_140017.txt",
+      "full_path": "error_report_20250912_140017.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140519.txt",
+      "relative_path": "error_report_20250912_140519.txt",
+      "full_path": "error_report_20250912_140519.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140520.txt",
+      "relative_path": "error_report_20250912_140520.txt",
+      "full_path": "error_report_20250912_140520.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140521.txt",
+      "relative_path": "error_report_20250912_140521.txt",
+      "full_path": "error_report_20250912_140521.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140724.txt",
+      "relative_path": "error_report_20250912_140724.txt",
+      "full_path": "error_report_20250912_140724.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140725.txt",
+      "relative_path": "error_report_20250912_140725.txt",
+      "full_path": "error_report_20250912_140725.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140727.txt",
+      "relative_path": "error_report_20250912_140727.txt",
+      "full_path": "error_report_20250912_140727.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140915.txt",
+      "relative_path": "error_report_20250912_140915.txt",
+      "full_path": "error_report_20250912_140915.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140916.txt",
+      "relative_path": "error_report_20250912_140916.txt",
+      "full_path": "error_report_20250912_140916.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140918.txt",
+      "relative_path": "error_report_20250912_140918.txt",
+      "full_path": "error_report_20250912_140918.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "replit.md",
+      "relative_path": "collected_android_files/replit.md",
+      "full_path": "collected_android_files/replit.md",
+      "size": 6656,
+      "extension": ".md"
+    },
+    {
+      "name": "error_report_20250912_133914.txt",
+      "relative_path": "collected_android_files/error_report_20250912_133914.txt",
+      "full_path": "collected_android_files/error_report_20250912_133914.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133915.txt",
+      "relative_path": "collected_android_files/error_report_20250912_133915.txt",
+      "full_path": "collected_android_files/error_report_20250912_133915.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133916.txt",
+      "relative_path": "collected_android_files/error_report_20250912_133916.txt",
+      "full_path": "collected_android_files/error_report_20250912_133916.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "settings.gradle",
+      "relative_path": "collected_android_files/settings.gradle",
+      "full_path": "collected_android_files/settings.gradle",
+      "size": 324,
+      "extension": ".gradle"
+    },
+    {
+      "name": "build.gradle",
+      "relative_path": "collected_android_files/build.gradle",
+      "full_path": "collected_android_files/build.gradle",
+      "size": 229,
+      "extension": ".gradle"
+    },
+    {
+      "name": "error_report_20250912_134329.txt",
+      "relative_path": "collected_android_files/error_report_20250912_134329.txt",
+      "full_path": "collected_android_files/error_report_20250912_134329.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134636.txt",
+      "relative_path": "collected_android_files/error_report_20250912_134636.txt",
+      "full_path": "collected_android_files/error_report_20250912_134636.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134637.txt",
+      "relative_path": "collected_android_files/error_report_20250912_134637.txt",
+      "full_path": "collected_android_files/error_report_20250912_134637.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134638.txt",
+      "relative_path": "collected_android_files/error_report_20250912_134638.txt",
+      "full_path": "collected_android_files/error_report_20250912_134638.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135227.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135227.txt",
+      "full_path": "collected_android_files/error_report_20250912_135227.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135228.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135228.txt",
+      "full_path": "collected_android_files/error_report_20250912_135228.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135230.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135230.txt",
+      "full_path": "collected_android_files/error_report_20250912_135230.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135625.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135625.txt",
+      "full_path": "collected_android_files/error_report_20250912_135625.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135627.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135627.txt",
+      "full_path": "collected_android_files/error_report_20250912_135627.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135628.txt",
+      "relative_path": "collected_android_files/error_report_20250912_135628.txt",
+      "full_path": "collected_android_files/error_report_20250912_135628.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140015.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140015.txt",
+      "full_path": "collected_android_files/error_report_20250912_140015.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140016.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140016.txt",
+      "full_path": "collected_android_files/error_report_20250912_140016.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140017.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140017.txt",
+      "full_path": "collected_android_files/error_report_20250912_140017.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140519.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140519.txt",
+      "full_path": "collected_android_files/error_report_20250912_140519.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140520.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140520.txt",
+      "full_path": "collected_android_files/error_report_20250912_140520.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140521.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140521.txt",
+      "full_path": "collected_android_files/error_report_20250912_140521.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140724.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140724.txt",
+      "full_path": "collected_android_files/error_report_20250912_140724.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140725.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140725.txt",
+      "full_path": "collected_android_files/error_report_20250912_140725.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140727.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140727.txt",
+      "full_path": "collected_android_files/error_report_20250912_140727.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140915.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140915.txt",
+      "full_path": "collected_android_files/error_report_20250912_140915.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140916.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140916.txt",
+      "full_path": "collected_android_files/error_report_20250912_140916.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140918.txt",
+      "relative_path": "collected_android_files/error_report_20250912_140918.txt",
+      "full_path": "collected_android_files/error_report_20250912_140918.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "collection_report.json",
+      "relative_path": "collected_android_files/collected_android_files/collection_report.json",
+      "full_path": "collected_android_files/collected_android_files/collection_report.json",
+      "size": 232,
+      "extension": ".json"
+    },
+    {
+      "name": "replit.md",
+      "relative_path": "collected_android_files/collected_android_files/replit.md",
+      "full_path": "collected_android_files/collected_android_files/replit.md",
+      "size": 6656,
+      "extension": ".md"
+    },
+    {
+      "name": "error_report_20250912_133914.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_133914.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_133914.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133915.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_133915.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_133915.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_133916.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_133916.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_133916.txt",
+      "size": 6238,
+      "extension": ".txt"
+    },
+    {
+      "name": "settings.gradle",
+      "relative_path": "collected_android_files/collected_android_files/settings.gradle",
+      "full_path": "collected_android_files/collected_android_files/settings.gradle",
+      "size": 324,
+      "extension": ".gradle"
+    },
+    {
+      "name": "build.gradle",
+      "relative_path": "collected_android_files/collected_android_files/build.gradle",
+      "full_path": "collected_android_files/collected_android_files/build.gradle",
+      "size": 229,
+      "extension": ".gradle"
+    },
+    {
+      "name": "error_report_20250912_134329.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_134329.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_134329.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134636.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_134636.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_134636.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134637.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_134637.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_134637.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_134638.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_134638.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_134638.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135227.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135227.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135227.txt",
+      "size": 7496,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135228.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135228.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135228.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135230.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135230.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135230.txt",
+      "size": 7504,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135625.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135625.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135625.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135627.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135627.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135627.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_135628.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_135628.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_135628.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140015.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140015.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140015.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140016.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140016.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140016.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140017.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140017.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140017.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140519.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140519.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140519.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140520.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140520.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140520.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140521.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140521.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140521.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140724.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140724.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140724.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140725.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140725.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140725.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140727.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140727.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140727.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140915.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140915.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140915.txt",
+      "size": 6239,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140916.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140916.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140916.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "error_report_20250912_140918.txt",
+      "relative_path": "collected_android_files/collected_android_files/error_report_20250912_140918.txt",
+      "full_path": "collected_android_files/collected_android_files/error_report_20250912_140918.txt",
+      "size": 6247,
+      "extension": ".txt"
+    },
+    {
+      "name": "gradle-wrapper.properties",
+      "relative_path": "gradle/wrapper/gradle-wrapper.properties",
+      "full_path": "gradle/wrapper/gradle-wrapper.properties",
+      "size": 220,
+      "extension": ".properties"
+    },
+    {
+      "name": "build.gradle",
+      "relative_path": "app/build.gradle",
+      "full_path": "app/build.gradle",
+      "size": 1054,
+      "extension": ".gradle"
+    },
+    {
+      "name": "proguard-rules.pro",
+      "relative_path": "app/proguard-rules.pro",
+      "full_path": "app/proguard-rules.pro",
+      "size": 750,
+      "extension": ".pro"
+    },
+    {
+      "name": "AndroidManifest.xml",
+      "relative_path": "app/src/main/AndroidManifest.xml",
+      "full_path": "app/src/main/AndroidManifest.xml",
+      "size": 841,
+      "extension": ".xml"
+    },
+    {
+      "name": "MainActivity.java",
+      "relative_path": "app/src/main/java/com/example/android/MainActivity.java",
+      "full_path": "app/src/main/java/com/example/android/MainActivity.java",
+      "size": 332,
+      "extension": ".java"
+    },
+    {
+      "name": "activity_main.xml",
+      "relative_path": "app/src/main/res/layout/activity_main.xml",
+      "full_path": "app/src/main/res/layout/activity_main.xml",
+      "size": 778,
+      "extension": ".xml"
+    },
+    {
+      "name": "strings.xml",
+      "relative_path": "app/src/main/res/values/strings.xml",
+      "full_path": "app/src/main/res/values/strings.xml",
+      "size": 69,
+      "extension": ".xml"
+    },
+    {
+      "name": "themes.xml",
+      "relative_path": "app/src/main/res/values/themes.xml",
+      "full_path": "app/src/main/res/values/themes.xml",
+      "size": 829,
+      "extension": ".xml"
+    },
+    {
+      "name": "colors.xml",
+      "relative_path": "app/src/main/res/values/colors.xml",
+      "full_path": "app/src/main/res/values/colors.xml",
+      "size": 378,
+      "extension": ".xml"
+    },
+    {
+      "name": "backup_rules.xml",
+      "relative_path": "app/src/main/res/xml/backup_rules.xml",
+      "full_path": "app/src/main/res/xml/backup_rules.xml",
+      "size": 140,
+      "extension": ".xml"
+    },
+    {
+      "name": "data_extraction_rules.xml",
+      "relative_path": "app/src/main/res/xml/data_extraction_rules.xml",
+      "full_path": "app/src/main/res/xml/data_extraction_rules.xml",
+      "size": 376,
+      "extension": ".xml"
+    },
+    {
+      "name": "android.yml",
+      "relative_path": ".github/workflows/android.yml",
+      "full_path": ".github/workflows/android.yml",
+      "size": 1469,
+      "extension": ".yml"
+    }
+  ]
+}
