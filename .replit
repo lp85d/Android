@@ -1,0 +1,44 @@
+modules = ["python-3.11"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Smart Android Monitor"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Proactive Monitor"
+
+[[workflows.workflow]]
+name = "Smart Android Monitor"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python github_actions_monitor.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "Proactive Monitor"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python proactive_monitor.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
