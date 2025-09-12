@@ -1,0 +1,43 @@
+🔥 ОБНАРУЖЕНЫ ОШИБКИ КОМПИЛЯЦИИ В GITHUB ACTIONS
+============================================================
+Репозиторий: lp85d/Android
+Workflow: Android CI
+Run #: 24
+Ветка: main
+Коммит: ddc94986
+Статус: completed / failure
+Время: 2025-09-11 20:46:17+00:00
+URL: https://github.com/lp85d/Android/actions/runs/17656885659
+
+📋 DEPENDENCY ERROR:
+----------------------------------------
+Строка 28: 2025-09-11T20:46:12.8525667Z Download action repository 'actions/checkout@v3' (SHA:f43a0e5ff2bd294095638e18286ca9a3d1956744)
+Контекст:
+  2025-09-11T20:46:12.4270026Z Prepare workflow directory
+  2025-09-11T20:46:12.4594354Z Prepare all required actions
+  2025-09-11T20:46:12.4632408Z Getting action download info
+  2025-09-11T20:46:12.8525667Z Download action repository 'actions/checkout@v3' (SHA:f43a0e5ff2bd294095638e18286ca9a3d1956744)
+  2025-09-11T20:46:13.0642558Z Download action repository 'actions/setup-java@v3' (SHA:17f84c3641ba7b8f6deff6309fc4c864478f5d62)
+  2025-09-11T20:46:13.6150491Z Complete job name: build
+
+Строка 29: 2025-09-11T20:46:13.0642558Z Download action repository 'actions/setup-java@v3' (SHA:17f84c3641ba7b8f6deff6309fc4c864478f5d62)
+Контекст:
+  2025-09-11T20:46:12.4594354Z Prepare all required actions
+  2025-09-11T20:46:12.4632408Z Getting action download info
+  2025-09-11T20:46:12.8525667Z Download action repository 'actions/checkout@v3' (SHA:f43a0e5ff2bd294095638e18286ca9a3d1956744)
+  2025-09-11T20:46:13.0642558Z Download action repository 'actions/setup-java@v3' (SHA:17f84c3641ba7b8f6deff6309fc4c864478f5d62)
+  2025-09-11T20:46:13.6150491Z Complete job name: build
+  2025-09-11T20:46:13.6832090Z ##[group]Run actions/checkout@v3
+
+Строка 33: 2025-09-11T20:46:13.6833470Z   repository: lp85d/Android
+Контекст:
+  2025-09-11T20:46:13.6150491Z Complete job name: build
+  2025-09-11T20:46:13.6832090Z ##[group]Run actions/checkout@v3
+  2025-09-11T20:46:13.6833078Z with:
+  2025-09-11T20:46:13.6833470Z   repository: lp85d/Android
+  2025-09-11T20:46:13.6834170Z   token: ***
+  2025-09-11T20:46:13.6834546Z   ssh-strict: true
+
+🔧 РЕКОМЕНДАЦИИ ПО ИСПРАВЛЕНИЮ:
+----------------------------------------
+• Проверьте версии зависимостей и репозитории
