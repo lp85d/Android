@@ -301,43 +301,41 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_start_service:
-                Intent startIntent = new Intent(this, SoundService.class);
-                startIntent.putExtra("customUrl", customUrl);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(startIntent);
+        if (item.getItemId() == R.id.action_start_service) {
+            Intent startIntent = new Intent(this, SoundService.class);
+            startIntent.putExtra("customUrl", customUrl);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(startIntent);
+            } else {
+                startService(startIntent);
+            }
+            Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
+            updateStatus();
+            return true;
+        } else if (item.getItemId() == R.id.action_stop_service) {
+            Intent stopIntent = new Intent(this, SoundService.class);
+            stopService(stopIntent);
+            Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
+            updateStatus();
+            return true;
+        } else if (item.getItemId() == R.id.action_request_permission) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
                 } else {
-                    startService(startIntent);
+                    Toast.makeText(this, "Разрешение уже предоставлено", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
-                updateStatus();
-                return true;
-            case R.id.action_stop_service:
-                Intent stopIntent = new Intent(this, SoundService.class);
-                stopService(stopIntent);
-                Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
-                updateStatus();
-                return true;
-            case R.id.action_request_permission:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-                    if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                        intent.setData(Uri.parse("package:" + getPackageName()));
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(this, "Разрешение уже предоставлено", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                updateStatus();
-                return true;
-            case R.id.action_change_url:
-                Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            }
+            updateStatus();
+            return true;
+        } else if (item.getItemId() == R.id.action_change_url) {
+            Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }
 EOF
