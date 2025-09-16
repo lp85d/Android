@@ -356,7 +356,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-android.os.Looper;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
 import java.net.HttpURLConnection;
@@ -594,9 +594,13 @@ EOF
     # Создание тестового MP3
     create_test_mp3 "app/src/main/res/raw/sound.mp3" || error "Не удалось создать MP3 файл"
     
-    # Создание Gradle Wrapper
+    # Проверка доступности Gradle и создание Gradle Wrapper
+    log "Проверка доступности Gradle..."
+    if ! command -v gradle >/dev/null 2>&1; then
+        error "Gradle не найден в системе"
+    fi
     log "Создание Gradle Wrapper..."
-    gradle wrapper --gradle-version="8.6" --distribution-type=bin || error "Не удалось создать Gradle Wrapper"
+    gradle wrapper --gradle-version="8.6" --distribution-type=bin || error "Не удалось создать Gradle Wrapper: $?"
     chmod +x gradlew || error "Не удалось сделать gradlew исполняемым"
     debug "Gradle Wrapper создан и настроен"
 
