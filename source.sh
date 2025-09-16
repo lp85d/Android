@@ -2,7 +2,6 @@
 
 # ЧАСТЬ 1: ИСХОДНЫЙ КОД ПРИЛОЖЕНИЯ
 # Этот скрипт содержит все необходимые функции для создания файлов проекта ParsPost.
-# Он должен вызываться из основного сборочного скрипта build.sh.
 
 # Цвета и логирование
 GREEN='\033[0;32m'
@@ -175,7 +174,7 @@ EOF
 EOF
     debug "Создан AndroidManifest.xml"
 
-    # MainActivity.java
+    # MainActivity.java (с меню, скрытием кнопок, customUrl)
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -191,6 +190,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -199,7 +199,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private String customUrl = "https://httpbin.org/status/200";
+    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -343,7 +343,7 @@ public class MainActivity extends Activity {
 EOF
     debug "Создан MainActivity.java"
 
-    # SoundService.java
+    # SoundService.java (с customUrl)
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -388,7 +388,7 @@ public class SoundService extends Service {
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
         } else {
-            customUrl = "https://httpbin.org/status/200";
+            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -490,7 +490,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml
+    # activity_main.xml (с контейнером для кнопок)
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -594,15 +594,5 @@ EOF
     # Создание тестового MP3
     create_test_mp3 "app/src/main/res/raw/sound.mp3" || error "Не удалось создать MP3 файл"
     
-    # Проверка доступности Gradle и создание Gradle Wrapper
-    log "Проверка доступности Gradle..."
-    if ! command -v gradle >/dev/null 2>&1; then
-        error "Gradle не найден в системе"
-    fi
-    log "Создание Gradle Wrapper..."
-    gradle wrapper --gradle-version="8.6" --distribution-type=bin || error "Не удалось создать Gradle Wrapper: $?"
-    chmod +x gradlew || error "Не удалось сделать gradlew исполняемым"
-    debug "Gradle Wrapper создан и настроен"
-
     log "✅ Все файлы проекта ParsPost созданы."
 }

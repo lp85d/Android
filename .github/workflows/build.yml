@@ -29,18 +29,11 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-    - name: Verify Gradle is available
-      run: gradle --version || { echo "Gradle not found"; exit 1; }
+    - name: Make build script executable
+      run: chmod +x ./ci_build.sh
 
-    - name: Create project files and build
-      run: |
-        source ./source.sh "$GITHUB_WORKSPACE"  # Передаём корневую директорию
-        if [ ! -f gradlew ]; then
-          error "gradlew не найден после выполнения source.sh"
-          exit 1
-        fi
-        ./gradlew assembleDebug --stacktrace
-      shell: /usr/bin/bash -e {0}
+    - name: Build application
+      run: ./ci_build.sh
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
