@@ -29,14 +29,15 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-    - name: Make build script executable
-      run: chmod +x ./ci_build.sh
-
-    - name: Build application
-      run: ./ci_build.sh
+    - name: Create project files and build
+      run: |
+        source ./source.sh
+        cd ParsPost  # Обновлено с MySoundApp на ParsPost, так как проект переименован
+        ./gradlew assembleDebug --stacktrace
+      shell: /usr/bin/bash -e {0}
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: MySoundApp/app/build/outputs/apk/debug/app-debug.apk
+        path: ParsPost/app/build/outputs/apk/debug/app-debug.apk  # Обновлено с MySoundApp на ParsPost
