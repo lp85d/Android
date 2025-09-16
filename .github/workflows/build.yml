@@ -31,8 +31,7 @@ jobs:
 
     - name: Create project files and build
       run: |
-        source ./source.sh "$GITHUB_WORKSPACE/ParsPost"  # Передаём путь как аргумент
-        cd ParsPost
+        source ./source.sh "$GITHUB_WORKSPACE"  # Передаём корневую директорию
         ./gradlew assembleDebug --stacktrace
       shell: /usr/bin/bash -e {0}
 
@@ -40,4 +39,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: ParsPost/app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk  # Обновлён путь
