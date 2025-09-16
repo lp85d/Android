@@ -2,8 +2,9 @@
 
 # ЧАСТЬ 1: ИСХОДНЫЙ КОД ПРИЛОЖЕНИЯ
 # Этот скрипт содержит все необходимые функции для создания файлов проекта ParsPost.
+# Он должен вызываться из основного сборочного скрипта ci_build.sh.
 
-# Цвета и логирование
+# Цвета и логирование (дублируются для автономности)
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
@@ -11,7 +12,6 @@ NC='\033[0m'
 log() { echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}"; }
 info() { echo -e "${BLUE}[INFO] $1${NC}"; }
 debug() { echo -e "${PURPLE}[DEBUG] $1${NC}"; }
-error() { echo -e "\033[0;31m[ERROR] $1${NC}"; exit 1; }
 
 # Создание тестового MP3 файла
 create_test_mp3() {
@@ -19,24 +19,24 @@ create_test_mp3() {
     debug "Создание MP3 файла: $mp3_path"
     
     local mp3_dir=$(dirname "$mp3_path")
-    mkdir -p "$mp3_dir" || error "Не удалось создать директорию $mp3_dir"
+    mkdir -p "$mp3_dir"
     
     if [ ! -f "$mp3_path" ]; then
         log "Создание тестового MP3 файла..."
         
+        # Создание мелодичного звука
         if ! ffmpeg -f lavfi -i "sine=frequency=440:duration=1,sine=frequency=554:duration=1,sine=frequency=659:duration=1" \
                    -filter_complex "concat=n=3:v=0:a=1" \
                    -ac 2 -ar 44100 -b:a 128k "$mp3_path" -y >/dev/null 2>&1; then
-            if ! ffmpeg -f lavfi -i "sine=frequency=440:duration=2" \
-                       -ac 2 -ar 44100 -b:a 128k "$mp3_path" -y >/dev/null 2>&1; then
-                error "Не удалось создать MP3 файл с помощью ffmpeg"
-            fi
+            ffmpeg -f lavfi -i "sine=frequency=440:duration=2" \
+                   -ac 2 -ar 44100 -b:a 128k "$mp3_path" -y >/dev/null 2>&1
         fi
         
         if [ -f "$mp3_path" ]; then
             log "✅ MP3 файл создан: $mp3_path"
         else
-            error "MP3 файл не создан"
+            echo -e "\033[0;31m[ERROR] Не удалось создать MP3 файл\033[0m"
+            exit 1
         fi
     else
         info "MP3 файл уже существует: $mp3_path"
@@ -45,10 +45,11 @@ create_test_mp3() {
 
 # Основная функция для создания всех файлов проекта
 create_project_files() {
-    local project_dir="${1:-$PWD}" # Используем текущую директорию по умолчанию
+    local project_dir="$1"
     log "Создание файлов проекта в $project_dir..."
 
-    # Создаем необходимые подкаталоги непосредственно в project_dir
+    # Создаем основную директорию проекта и необходимые подкаталоги
+    mkdir -p "$project_dir"
     local dirs=(
         "app/src/main/java/com/example/mysoundapp"
         "app/src/main/res/layout"
@@ -57,14 +58,13 @@ create_project_files() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
-        "app/src/main/res/menu"
+        "app/src/main/res/menu"  # Добавляем для меню
     )
     for dir in "${dirs[@]}"; do
-        mkdir -p "$project_dir/$dir" || error "Не удалось создать подкаталог $dir"
-        debug "Создан подкаталог $project_dir/$dir"
+        mkdir -p "$project_dir/$dir"
     done
 
-    cd "$project_dir" || error "Не удалось перейти в директорию $project_dir"
+    cd "$project_dir"
 
     # settings.gradle
     cat > settings.gradle << 'EOF'
@@ -343,7 +343,7 @@ public class MainActivity extends Activity {
 EOF
     debug "Создан MainActivity.java"
 
-    # SoundService.java (с customUrl)
+    # SoundService.java (с поддержкой customUrl)
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -372,7 +372,7 @@ public class SoundService extends Service {
     private MediaPlayer mediaPlayer;
     private PowerManager.WakeLock wakeLock;
     private boolean isRunning = false;
-    private String customUrl;
+    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
 
     @Override
     public void onCreate() {
@@ -387,8 +387,6 @@ public class SoundService extends Service {
         Log.d(TAG, "Service запущен");
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
-        } else {
-            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -417,8 +415,7 @@ public class SoundService extends Service {
     private Notification createNotification(String text) {
         Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             new Notification.Builder(this, CHANNEL_ID) : new Notification.Builder(this);
-        return builder.setContentTitle("ParsPost работает")
-                .setContentText(text)
+        return builder.setContentTitle("ParsPost работает").setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_media_play).setOngoing(true).build();
     }
 
@@ -490,7 +487,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml (с контейнером для кнопок)
+    # activity_main.xml (с контейнером для скрытия кнопок)
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -571,7 +568,8 @@ EOF
 EOF
     debug "Создан activity_main.xml"
 
-    # main_menu.xml
+    # main_menu.xml (для меню)
+    mkdir -p app/src/main/res/menu
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
@@ -592,7 +590,7 @@ EOF
     debug "Создан main_menu.xml"
 
     # Создание тестового MP3
-    create_test_mp3 "app/src/main/res/raw/sound.mp3" || error "Не удалось создать MP3 файл"
+    create_test_mp3 "$project_dir/app/src/main/res/raw/sound.mp3"
     
     log "✅ Все файлы проекта ParsPost созданы."
 }

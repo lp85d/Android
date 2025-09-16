@@ -22,15 +22,9 @@ jobs:
 
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
-      with:
-        # Установка компонентов через параметр packages
-        packages: |
-          build-tools;34.0.0
-          platforms;android-34
-          platform-tools
 
-    - name: Accept Android SDK licenses
-      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+    - name: Accept SDK licenses
+      run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v4
@@ -42,18 +36,7 @@ jobs:
       run: chmod +x ./ci_build.sh
 
     - name: Build application
-      run: |
-        set -x  # Включить отладочный вывод команд
-        ./ci_build.sh 2>&1 | tee build.log  # Перенаправить вывод в файл и на экран
-      env:
-        GRADLE_OPTS: "-Xmx2048m -Dorg.gradle.daemon=false"  # Увеличить память и отключить демона
-
-    - name: Upload build log
-      if: failure()  # Загрузить лог только при ошибке
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log
-        path: build.log
+      run: ./ci_build.sh
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4

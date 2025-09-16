@@ -6,7 +6,7 @@ set -e
 # Подключаем скрипт с исходным кодом
 source ./source.sh
 
-# Устанавливаем директорию проекта (корень)
+# Устанавливаем директорию проекта (корень репозитория)
 PROJECT_DIR="$GITHUB_WORKSPACE"
 echo "Project directory: $PROJECT_DIR"
 
@@ -18,7 +18,7 @@ cd "$PROJECT_DIR"
 
 # Настраиваем Gradle Wrapper
 echo "Setting up Gradle wrapper..."
-gradle wrapper --gradle-version="8.6" --distribution-type=bin
+gradle wrapper --gradle-version="8.6"
 chmod +x gradlew
 
 # Собираем APK
