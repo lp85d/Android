@@ -2,7 +2,7 @@
 
 # ЧАСТЬ 1: ИСХОДНЫЙ КОД ПРИЛОЖЕНИЯ
 # Этот скрипт содержит все необходимые функции для создания файлов проекта ParsPost.
-# Он должен вызываться из основного сборочного скрипта ci_build.sh.
+# Он должен вызываться из основного сборочного скрипта build.sh.
 
 # Цвета и логирование (дублируются для автономности)
 GREEN='\033[0;32m'
@@ -343,7 +343,7 @@ public class MainActivity extends Activity {
 EOF
     debug "Создан MainActivity.java"
 
-    # SoundService.java (с поддержкой customUrl)
+    # SoundService.java (с customUrl)
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -372,7 +372,7 @@ public class SoundService extends Service {
     private MediaPlayer mediaPlayer;
     private PowerManager.WakeLock wakeLock;
     private boolean isRunning = false;
-    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+    private String customUrl;
 
     @Override
     public void onCreate() {
@@ -387,6 +387,8 @@ public class SoundService extends Service {
         Log.d(TAG, "Service запущен");
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
+        } else {
+            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -487,7 +489,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml (с контейнером для скрытия кнопок)
+    # activity_main.xml (с контейнером для кнопок)
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -569,7 +571,6 @@ EOF
     debug "Создан activity_main.xml"
 
     # main_menu.xml (для меню)
-    mkdir -p app/src/main/res/menu
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">

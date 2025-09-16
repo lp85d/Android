@@ -6,8 +6,8 @@ set -e
 # Подключаем скрипт с исходным кодом
 source ./source.sh
 
-# Устанавливаем директорию проекта (корень репозитория)
-PROJECT_DIR="$GITHUB_WORKSPACE"
+# Устанавливаем директорию проекта
+PROJECT_DIR="$GITHUB_WORKSPACE/ParsPost"
 echo "Project directory: $PROJECT_DIR"
 
 # Создаем файлы проекта
