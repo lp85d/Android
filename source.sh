@@ -47,6 +47,22 @@ create_test_mp3() {
 create_project_files() {
     local project_dir="$1"
     log "Создание файлов проекта в $project_dir..."
+
+    # Создаем основную директорию проекта и необходимые подкаталоги
+    mkdir -p "$project_dir"
+    local dirs=(
+        "app/src/main/java/com/example/mysoundapp"
+        "app/src/main/res/layout"
+        "app/src/main/res/raw"
+        "app/src/main/res/values"
+        "app/src/main/res/xml"
+        "app/src/main/res/mipmap-hdpi"
+        "app/src/main/res/mipmap-mdpi"
+    )
+    for dir in "${dirs[@]}"; do
+        mkdir -p "$project_dir/$dir"
+    done
+
     cd "$project_dir"
 
     # settings.gradle
