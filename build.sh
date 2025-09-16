@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ЧАСТЬ 2: СИСТЕМА СБОРКИ
-# Этот скрипт настраивает окружение для Android-разработки в Termux,
-# создает структуру проекта и собирает APK, используя исходный код из source.sh.
+# Этот скрипт настраивает окружение для Android-разработки,
+# создает структуру проекта ParsPost и собирает APK.
 
 set -e
 
@@ -116,8 +116,8 @@ setup_android_sdk() {
 
 # Создание структуры каталогов проекта
 create_android_project_structure() {
-    log "Создание структуры каталогов проекта MySoundApp..."
-    local project_dir="$HOME/MySoundApp"
+    log "Создание структуры каталогов проекта ParsPost..."
+    local project_dir="$HOME/ParsPost"
     rm -rf "$project_dir"
     mkdir -p "$project_dir"
     
@@ -129,6 +129,7 @@ create_android_project_structure() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
+        "app/src/main/res/menu"
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -149,7 +150,7 @@ EOF
 # Настройка Gradle wrapper
 setup_gradle_wrapper() {
     log "Настройка Gradle wrapper..."
-    cd "$HOME/MySoundApp"
+    cd "$HOME/ParsPost"
     if [ ! -f "gradlew" ]; then
         # Save original files
         mv build.gradle build.gradle.bak
@@ -159,7 +160,7 @@ setup_gradle_wrapper() {
         echo "" > build.gradle
         echo "" > settings.gradle
         
-        gradle wrapper --gradle-version="8.2"
+        gradle wrapper --gradle-version="8.6"
         
         # Restore original files
         mv build.gradle.bak build.gradle
@@ -172,10 +173,10 @@ setup_gradle_wrapper() {
 # Сборка APK
 build_apk() {
     log "Сборка APK..."
-    cd "$HOME/MySoundApp"
+    cd "$HOME/ParsPost"
     ./gradlew clean
     if ./gradlew assembleDebug --stacktrace; then
-        local apk_path="$HOME/MySoundApp/app/build/outputs/apk/debug/app-debug.apk"
+        local apk_path="$HOME/ParsPost/app/build/outputs/apk/debug/app-debug.apk"
         echo "========================================="
         echo "🎉 УСПЕХ! APK успешно собран!"
         echo "📱 Путь к APK: $apk_path"
