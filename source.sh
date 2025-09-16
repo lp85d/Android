@@ -58,6 +58,7 @@ create_project_files() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
+        "app/src/main/res/menu" # Добавляем директорию для меню
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -81,7 +82,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "MySoundApp"
+rootProject.name = "ParsPost" # Изменяем название проекта
 include ':app'
 EOF
     debug "Создан settings.gradle"
@@ -151,7 +152,7 @@ EOF
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/ic_media_play"
-        android:label="MySoundApp"
+        android:label="ParsPost" # Изменяем название приложения
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
@@ -186,12 +187,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private TextView statusText;
+    private LinearLayout buttonContainer;
+    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,9 +208,12 @@ public class MainActivity extends Activity {
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
         Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
         statusText = findViewById(R.id.statusText);
+        buttonContainer = findViewById(R.id.buttonContainer);
         updateStatus();
+
         startServiceBtn.setOnClickListener(v -> {
             Intent serviceIntent = new Intent(this, SoundService.class);
+            serviceIntent.putExtra("customUrl", customUrl);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
             } else {
@@ -211,12 +222,14 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
             updateStatus();
         });
+
         stopServiceBtn.setOnClickListener(v -> {
             Intent serviceIntent = new Intent(this, SoundService.class);
             stopService(serviceIntent);
             Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
             updateStatus();
         });
+
         requestPermissionBtn.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
@@ -226,16 +239,20 @@ public class MainActivity extends Activity {
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "Разрешение уже предоставлено", Toast.LENGTH_SHORT).show();
+                    hideButtons();
                 }
             }
             updateStatus();
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         updateStatus();
+        checkBatteryOptimization();
     }
+
     private void updateStatus() {
         boolean isServiceRunning = isServiceRunning(SoundService.class);
         boolean isBatteryOptimized = true;
@@ -248,6 +265,7 @@ public class MainActivity extends Activity {
         status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅");
         statusText.setText(status.toString());
     }
+
     private boolean isServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -256,6 +274,70 @@ public class MainActivity extends Activity {
             }
         }
         return false;
+    }
+
+    private void checkBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                buttonContainer.setVisibility(View.VISIBLE);
+            } else {
+                hideButtons();
+            }
+        }
+    }
+
+    private void hideButtons() {
+        buttonContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_start_service:
+                Intent startIntent = new Intent(this, SoundService.class);
+                startIntent.putExtra("customUrl", customUrl);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(startIntent);
+                } else {
+                    startService(startIntent);
+                }
+                Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
+                updateStatus();
+                return true;
+            case R.id.action_stop_service:
+                Intent stopIntent = new Intent(this, SoundService.class);
+                stopService(stopIntent);
+                Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
+                updateStatus();
+                return true;
+            case R.id.action_request_permission:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                    if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(this, "Разрешение уже предоставлено", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                updateStatus();
+                return true;
+            case R.id.action_change_url:
+                // Здесь можно добавить диалог для ввода URL (пока заглушка)
+                Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 EOF
@@ -290,6 +372,8 @@ public class SoundService extends Service {
     private MediaPlayer mediaPlayer;
     private PowerManager.WakeLock wakeLock;
     private boolean isRunning = false;
+    private String customUrl;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -297,9 +381,15 @@ public class SoundService extends Service {
         createNotificationChannel();
         acquireWakeLock();
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service запущен");
+        if (intent != null && intent.hasExtra("customUrl")) {
+            customUrl = intent.getStringExtra("customUrl");
+        } else {
+            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+        }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
             startServerChecking();
@@ -307,11 +397,13 @@ public class SoundService extends Service {
         }
         return START_STICKY;
     }
+
     private void acquireWakeLock() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MySoundApp:WakeLock");
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ParsPost:WakeLock"); # Обновляем название в WakeLock
         wakeLock.acquire(10*60*1000L);
     }
+
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -321,12 +413,15 @@ public class SoundService extends Service {
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }
     }
+
     private Notification createNotification(String text) {
         Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             new Notification.Builder(this, CHANNEL_ID) : new Notification.Builder(this);
-        return builder.setContentTitle("MySoundApp работает").setContentText(text)
+        return builder.setContentTitle("ParsPost работает") # Обновляем название в уведомлении
+                .setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_media_play).setOngoing(true).build();
     }
+
     private void startServerChecking() {
         checkServerRunnable = new Runnable() {
             @Override
@@ -337,41 +432,35 @@ public class SoundService extends Service {
         };
         handler.post(checkServerRunnable);
     }
+
     private void checkServerAndPlaySound() {
         new Thread(() -> {
             try {
-                String[] testUrls = {"https://httpbin.org/status/200", "https://www.google.com"};
-                boolean serverResponded = false;
-                for (String testUrl : testUrls) {
-                    try {
-                        URL url = new URL(testUrl);
-                        HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                        c.setRequestMethod("GET");
-                        c.setConnectTimeout(5000);
-                        c.setReadTimeout(5000);
-                        int responseCode = c.getResponseCode();
-                        if (responseCode >= 200 && responseCode < 400) {
-                            serverResponded = true;
-                            handler.post(() -> {
-                                playSound();
-                                updateNotification("Сервер отвечает ✅ (код: " + responseCode + ")");
-                            });
-                            break;
-                        }
-                        c.disconnect();
-                    } catch (Exception e) {
-                        Log.w(TAG, "Ошибка при проверке " + testUrl + ": " + e.getMessage());
-                    }
+                URL url = new URL(customUrl);
+                HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                c.setRequestMethod("GET");
+                c.setConnectTimeout(5000);
+                c.setReadTimeout(5000);
+                int responseCode = c.getResponseCode();
+                if (responseCode >= 200 && responseCode < 400) {
+                    handler.post(() -> {
+                        playSound();
+                        updateNotification("Сервер отвечает ✅ (код: " + responseCode + ")");
+                    });
+                } else {
+                    handler.post(() -> updateNotification("Сервер не отвечает ❌ (код: " + responseCode + ")"));
                 }
-                if (!serverResponded) handler.post(() -> updateNotification("Серверы не отвечают ❌"));
+                c.disconnect();
             } catch (Exception e) {
-                handler.post(() -> updateNotification("Ошибка проверки ⚠️"));
-            }}
-        ).start();
+                handler.post(() -> updateNotification("Ошибка проверки ⚠️: " + e.getMessage()));
+            }
+        }).start();
     }
+
     private void updateNotification(String text) {
         getSystemService(NotificationManager.class).notify(NOTIFICATION_ID, createNotification(text));
     }
+
     private void playSound() {
         try {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) return;
@@ -385,6 +474,7 @@ public class SoundService extends Service {
             Log.e(TAG, "Ошибка воспроизведения звука", e);
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -393,6 +483,7 @@ public class SoundService extends Service {
         if (mediaPlayer != null) mediaPlayer.release();
         if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
     }
+
     @Override
     public IBinder onBind(Intent intent) { return null; }
 }
@@ -412,7 +503,7 @@ EOF
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MySoundApp"
+        android:text="ParsPost" # Изменяем название
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -429,35 +520,42 @@ EOF
         android:padding="16dp"
         android:layout_marginBottom="24dp"
         android:elevation="2dp" />
-    <Button
-        android:id="@+id/startServiceBtn"
+    <LinearLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="12dp"
-        android:text="▶️ Запустить службу мониторинга"
-        android:textSize="16sp"
-        android:background="#4CAF50"
-        android:textColor="#ffffff"
-        android:elevation="4dp" />
-    <Button
-        android:id="@+id/stopServiceBtn"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="12dp"
-        android:text="⏹️ Остановить службу"
-        android:textSize="16sp"
-        android:background="#f44336"
-        android:textColor="#ffffff"
-        android:elevation="4dp" />
-    <Button
-        android:id="@+id/requestPermissionBtn"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="🔋 Отключить оптимизацию батареи"
-        android:textSize="16sp"
-        android:background="#FF9800"
-        android:textColor="#ffffff"
-        android:elevation="4dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <Button
+            android:id="@+id/startServiceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:text="▶️ Запустить службу мониторинга"
+            android:textSize="16sp"
+            android:background="#4CAF50"
+            android:textColor="#ffffff"
+            android:elevation="4dp" />
+        <Button
+            android:id="@+id/stopServiceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:text="⏹️ Остановить службу"
+            android:textSize="16sp"
+            android:background="#f44336"
+            android:textColor="#ffffff"
+            android:elevation="4dp" />
+        <Button
+            android:id="@+id/requestPermissionBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="🔋 Отключить оптимизацию батареи"
+            android:textSize="16sp"
+            android:background="#FF9800"
+            android:textColor="#ffffff"
+            android:elevation="4dp" />
+    </LinearLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -473,8 +571,28 @@ EOF
 EOF
     debug "Создан activity_main.xml"
 
+    # main_menu.xml
+    cat > app/src/main/res/menu/main_menu.xml << 'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_start_service"
+        android:title="Запустить службу" />
+    <item
+        android:id="@+id/action_stop_service"
+        android:title="Остановить службу" />
+    <item
+        android:id="@+id/action_request_permission"
+        android:title="Отключить оптимизацию батареи" />
+    <item
+        android:id="@+id/action_change_url"
+        android:title="Изменить URL сервера" />
+</menu>
+EOF
+    debug "Создан main_menu.xml"
+
     # Создание тестового MP3
     create_test_mp3 "$project_dir/app/src/main/res/raw/sound.mp3"
     
-    log "✅ Все файлы проекта MySoundApp созданы."
+    log "✅ Все файлы проекта ParsPost созданы."
 }
