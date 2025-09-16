@@ -32,6 +32,10 @@ jobs:
     - name: Create project files and build
       run: |
         source ./source.sh "$GITHUB_WORKSPACE"  # Передаём корневую директорию
+        if [ ! -f gradlew ]; then
+          error "gradlew не найден после выполнения source.sh"
+          exit 1
+        fi
         ./gradlew assembleDebug --stacktrace
       shell: /usr/bin/bash -e {0}
 
@@ -39,4 +43,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk  # Обновлён путь
+        path: app/build/outputs/apk/debug/app-debug.apk
