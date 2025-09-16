@@ -100,7 +100,7 @@ EOF
     # app/build.gradle
     cat > app/build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.1.0'
+    id 'com.android.application'
 }
 android {
     namespace 'com.example.mysoundapp'
