@@ -119,8 +119,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 dependencies {
@@ -130,6 +130,13 @@ dependencies {
 }
 EOF
     debug "Создан app/build.gradle"
+
+    # gradle.properties
+    cat > gradle.properties << 'EOF'
+android.useAndroidX=true
+android.enableJetifier=true
+EOF
+    debug "Создан gradle.properties"
 
     # AndroidManifest.xml
     cat > app/src/main/AndroidManifest.xml << 'EOF'
