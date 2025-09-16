@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ЧАСТЬ 1: ИСХОДНЫЙ КОД ПРИЛОЖЕНИЯ
-# Этот скрипт содержит все необходимые функции для создания файлов проекта MySoundApp.
+# Этот скрипт содержит все необходимые функции для создания файлов проекта ParsPost.
 # Он должен вызываться из основного сборочного скрипта build.sh.
 
 # Цвета и логирование (дублируются для автономности)
@@ -45,7 +45,7 @@ create_test_mp3() {
 
 # Основная функция для создания всех файлов проекта
 create_project_files() {
-    local project_dir="$1"
+    local project_dir="${1:-$PWD/ParsPost}" # Используем $PWD/ParsPost по умолчанию, если аргумент не задан
     log "Создание файлов проекта в $project_dir..."
 
     # Создаем основную директорию проекта и необходимые подкаталоги
@@ -58,7 +58,7 @@ create_project_files() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
-        "app/src/main/res/menu" # Добавляем директорию для меню
+        "app/src/main/res/menu"
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -82,7 +82,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "ParsPost" # Изменяем название проекта
+rootProject.name = "ParsPost"
 include ':app'
 EOF
     debug "Создан settings.gradle"
@@ -152,7 +152,7 @@ EOF
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/ic_media_play"
-        android:label="ParsPost" # Изменяем название приложения
+        android:label="ParsPost"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
@@ -198,7 +198,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+    private String customUrl = "https://httpbin.org/status/200";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -332,7 +332,6 @@ public class MainActivity extends Activity {
                 updateStatus();
                 return true;
             case R.id.action_change_url:
-                // Здесь можно добавить диалог для ввода URL (пока заглушка)
                 Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -388,7 +387,7 @@ public class SoundService extends Service {
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
         } else {
-            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+            customUrl = "https://httpbin.org/status/200";
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -400,7 +399,7 @@ public class SoundService extends Service {
 
     private void acquireWakeLock() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ParsPost:WakeLock"); # Обновляем название в WakeLock
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ParsPost:WakeLock");
         wakeLock.acquire(10*60*1000L);
     }
 
@@ -417,7 +416,7 @@ public class SoundService extends Service {
     private Notification createNotification(String text) {
         Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             new Notification.Builder(this, CHANNEL_ID) : new Notification.Builder(this);
-        return builder.setContentTitle("ParsPost работает") # Обновляем название в уведомлении
+        return builder.setContentTitle("ParsPost работает")
                 .setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_media_play).setOngoing(true).build();
     }
@@ -503,7 +502,7 @@ EOF
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ParsPost" # Изменяем название
+        android:text="ParsPost"
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
