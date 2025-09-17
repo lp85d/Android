@@ -174,14 +174,16 @@ EOF
 EOF
     debug "Создан AndroidManifest.xml"
 
-    # MainActivity.java (с меню, скрытием кнопок, customUrl)
+    # MainActivity.java (с меню, скрытием только permission кнопки, SharedPreferences для URL, диалог для ввода URL)
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -192,14 +194,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private TextView statusText;
-    private LinearLayout buttonContainer;
-    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+    private Button requestPermissionBtn;
+    private String customUrl;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,10 +211,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Button startServiceBtn = findViewById(R.id.startServiceBtn);
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
-        Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
+        requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
         statusText = findViewById(R.id.statusText);
-        buttonContainer = findViewById(R.id.buttonContainer);
+        prefs = getSharedPreferences("ParsPostPrefs", MODE_PRIVATE);
+        customUrl = prefs.getString("customUrl", "https://httpbin.org/status/200");
         updateStatus();
+        checkBatteryOptimization();
 
         startServiceBtn.setOnClickListener(v -> {
             Intent serviceIntent = new Intent(this, SoundService.class);
@@ -240,7 +246,7 @@ public class MainActivity extends Activity {
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "Разрешение уже предоставлено", Toast.LENGTH_SHORT).show();
-                    hideButtons();
+                    hidePermissionButton();
                 }
             }
             updateStatus();
@@ -281,15 +287,17 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
             if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                buttonContainer.setVisibility(View.VISIBLE);
+                hidePermissionButton();
             } else {
-                hideButtons();
+                requestPermissionBtn.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    private void hideButtons() {
-        buttonContainer.setVisibility(View.GONE);
+    private void hidePermissionButton() {
+        if (requestPermissionBtn != null) {
+            requestPermissionBtn.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -332,16 +340,34 @@ public class MainActivity extends Activity {
             updateStatus();
             return true;
         } else if (item.getItemId() == R.id.action_change_url) {
-            Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
+            showUrlDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showUrlDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Изменить URL сервера");
+        final EditText input = new EditText(this);
+        input.setText(customUrl);
+        builder.setView(input);
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String newUrl = input.getText().toString().trim();
+            if (!newUrl.isEmpty()) {
+                customUrl = newUrl;
+                prefs.edit().putString("customUrl", customUrl).apply();
+                Toast.makeText(this, "URL обновлен: " + customUrl, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
+        builder.show();
     }
 }
 EOF
     debug "Создан MainActivity.java"
 
-    # SoundService.java (с customUrl)
+    # SoundService.java (с customUrl из SharedPreferences)
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -350,6 +376,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -371,11 +398,13 @@ public class SoundService extends Service {
     private PowerManager.WakeLock wakeLock;
     private boolean isRunning = false;
     private String customUrl;
+    private SharedPreferences prefs;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service создан");
+        prefs = getSharedPreferences("ParsPostPrefs", MODE_PRIVATE);
         createNotificationChannel();
         acquireWakeLock();
     }
@@ -386,7 +415,7 @@ public class SoundService extends Service {
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
         } else {
-            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+            customUrl = prefs.getString("customUrl", "https://httpbin.org/status/200");
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -487,7 +516,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml (с контейнером для кнопок)
+    # activity_main.xml (убираем buttonContainer, все кнопки отдельно)
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -517,42 +546,35 @@ EOF
         android:padding="16dp"
         android:layout_marginBottom="24dp"
         android:elevation="2dp" />
-    <LinearLayout
-        android:id="@+id/buttonContainer"
+    <Button
+        android:id="@+id/startServiceBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible">
-        <Button
-            android:id="@+id/startServiceBtn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginBottom="12dp"
-            android:text="▶️ Запустить службу мониторинга"
-            android:textSize="16sp"
-            android:background="#4CAF50"
-            android:textColor="#ffffff"
-            android:elevation="4dp" />
-        <Button
-            android:id="@+id/stopServiceBtn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginBottom="12dp"
-            android:text="⏹️ Остановить службу"
-            android:textSize="16sp"
-            android:background="#f44336"
-            android:textColor="#ffffff"
-            android:elevation="4dp" />
-        <Button
-            android:id="@+id/requestPermissionBtn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="🔋 Отключить оптимизацию батареи"
-            android:textSize="16sp"
-            android:background="#FF9800"
-            android:textColor="#ffffff"
-            android:elevation="4dp" />
-    </LinearLayout>
+        android:layout_height="56dp"
+        android:layout_marginBottom="12dp"
+        android:text="▶️ Запустить службу мониторинга"
+        android:textSize="16sp"
+        android:background="#4CAF50"
+        android:textColor="#ffffff"
+        android:elevation="4dp" />
+    <Button
+        android:id="@+id/stopServiceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="12dp"
+        android:text="⏹️ Остановить службу"
+        android:textSize="16sp"
+        android:background="#f44336"
+        android:textColor="#ffffff"
+        android:elevation="4dp" />
+    <Button
+        android:id="@+id/requestPermissionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="🔋 Отключить оптимизацию батареи"
+        android:textSize="16sp"
+        android:background="#FF9800"
+        android:textColor="#ffffff"
+        android:elevation="4dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
