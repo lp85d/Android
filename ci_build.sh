@@ -7,7 +7,7 @@ set -e
 source ./source.sh
 
 # Устанавливаем директорию проекта
-PROJECT_DIR="$GITHUB_WORKSPACE/ParsPost"
+PROJECT_DIR="$GITHUB_WORKSPACE"
 echo "Project directory: $PROJECT_DIR"
 
 # Создаем файлы проекта
@@ -27,4 +27,4 @@ echo "Building APK..."
 
 # Выводим путь к собранному APK
 echo "APK built successfully!"
-echo "APK path: $PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
+echo "APK path: $PROJECT_DIR/app-debug.apk"

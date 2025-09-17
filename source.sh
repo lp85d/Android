@@ -114,6 +114,12 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            // Перенаправление выходного APK в корень проекта
+            outputDirectory file("${rootProject.projectDir}")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -402,9 +408,9 @@ import java.net.URL;
 
 public class SoundService extends Service {
     private static final String TAG = "SoundService";
-    private static final String CHANNEL_ID = "SoundServiceChannel";
-    private static final int NOTIFICATION_ID = 1;
-    private static final int CHECK_INTERVAL = 30000;
+    private static const String CHANNEL_ID = "SoundServiceChannel";
+    private static const int NOTIFICATION_ID = 1;
+    private static const int CHECK_INTERVAL = 30000;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable checkServerRunnable;
     private MediaPlayer mediaPlayer;
