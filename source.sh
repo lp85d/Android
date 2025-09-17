@@ -139,6 +139,16 @@ android.enableJetifier=true
 EOF
     debug "Создан gradle.properties"
 
+    # strings.xml (для короткого названия)
+    cat > app/src/main/res/values/strings.xml << 'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParsPost</string>
+    <string name="app_short_name">PP</string>
+</resources>
+EOF
+    debug "Создан strings.xml"
+
     # AndroidManifest.xml
     cat > app/src/main/AndroidManifest.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -152,7 +162,7 @@ EOF
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/ic_media_play"
-        android:label="ParsPost"
+        android:label="@string/app_short_name"  <!-- Используем короткое имя -->
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
@@ -174,7 +184,7 @@ EOF
 EOF
     debug "Создан AndroidManifest.xml"
 
-    # MainActivity.java (с меню, скрытием только permission кнопки, SharedPreferences для URL, диалог для ввода URL)
+    # MainActivity.java (переключение на AppCompatActivity с поддержкой меню)
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -189,17 +199,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity; // Изменено с Activity на AppCompatActivity
+
+public class MainActivity extends AppCompatActivity {
     private TextView statusText;
     private Button requestPermissionBtn;
     private String customUrl;
@@ -302,6 +314,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("MainActivity", "onCreateOptionsMenu called"); // Для отладки
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -516,7 +529,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml (убираем buttonContainer, все кнопки отдельно)
+    # activity_main.xml
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -590,7 +603,7 @@ EOF
 EOF
     debug "Создан activity_main.xml"
 
-    # main_menu.xml (для меню)
+    # main_menu.xml
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
