@@ -53,18 +53,8 @@ jobs:
         name: build-log
         path: build.log
 
-    - name: Check APK existence
-      id: check_apk
-      run: |
-        if [ -f "app-debug.apk" ]; then
-          echo "apk-exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "apk-exists=false" >> $GITHUB_OUTPUT
-        fi
-
     - name: Upload APK artifact
-      if: steps.check_apk.outputs.apk-exists == 'true'
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app-debug.apk
+        path: ParsPost/app/build/outputs/apk/debug/app-debug.apk
