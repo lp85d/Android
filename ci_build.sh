@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-# Этот скрипт адаптирован для запуска в среде GitHub Actions.
-
 # Подключаем скрипт с исходным кодом
 source ./source.sh
 
@@ -18,7 +16,7 @@ cd "$PROJECT_DIR"
 
 # Настраиваем Gradle Wrapper
 echo "Setting up Gradle wrapper..."
-gradle wrapper --gradle-version="8.6"
+gradle wrapper --gradle-version="9.0.0"
 chmod +x gradlew
 
 # Собираем APK
@@ -28,7 +26,11 @@ if ! ./gradlew assembleDebug --stacktrace; then
     exit 1
 fi
 
-# Проверяем наличие собранного APK (в корне проекта)
+# Копируем APK в корень проекта
+echo "Copying APK to root directory..."
+cp app/build/outputs/apk/debug/app-debug.apk "$PROJECT_DIR/app-debug.apk"
+
+# Проверяем наличие собранного APK
 if [ -f "$PROJECT_DIR/app-debug.apk" ]; then
     echo "APK built successfully!"
     echo "APK path: $PROJECT_DIR/app-debug.apk"
