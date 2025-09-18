@@ -23,8 +23,16 @@ chmod +x gradlew
 
 # Собираем APK
 echo "Building APK..."
-./gradlew assembleDebug --stacktrace
+if ! ./gradlew assembleDebug --stacktrace; then
+    echo "APK build failed! Check build.log for details."
+    exit 1
+fi
 
-# Выводим путь к собранному APK
-echo "APK built successfully!"
-echo "APK path: $PROJECT_DIR/app-debug.apk"
+# Проверяем наличие собранного APK (в корне проекта)
+if [ -f "$PROJECT_DIR/app-debug.apk" ]; then
+    echo "APK built successfully!"
+    echo "APK path: $PROJECT_DIR/app-debug.apk"
+else
+    echo "Error: app-debug.apk not found in $PROJECT_DIR!"
+    exit 1
+fi
