@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
+# Этот скрипт адаптирован для запуска в среде GitHub Actions.
+
 # Подключаем скрипт с исходным кодом
 source ./source.sh
 
 # Устанавливаем директорию проекта
-PROJECT_DIR="$GITHUB_WORKSPACE"
+PROJECT_DIR="$GITHUB_WORKSPACE/ParsPost"
 echo "Project directory: $PROJECT_DIR"
 
 # Создаем файлы проекта
@@ -16,25 +18,13 @@ cd "$PROJECT_DIR"
 
 # Настраиваем Gradle Wrapper
 echo "Setting up Gradle wrapper..."
-gradle wrapper --gradle-version="9.0.0"
+gradle wrapper --gradle-version="8.6"
 chmod +x gradlew
 
 # Собираем APK
 echo "Building APK..."
-if ! ./gradlew assembleDebug --stacktrace; then
-    echo "APK build failed! Check build.log for details."
-    exit 1
-fi
+./gradlew assembleDebug --stacktrace
 
-# Копируем APK в корень проекта
-echo "Copying APK to root directory..."
-cp app/build/outputs/apk/debug/app-debug.apk "$PROJECT_DIR/app-debug.apk"
-
-# Проверяем наличие собранного APK
-if [ -f "$PROJECT_DIR/app-debug.apk" ]; then
-    echo "APK built successfully!"
-    echo "APK path: $PROJECT_DIR/app-debug.apk"
-else
-    echo "Error: app-debug.apk not found in $PROJECT_DIR!"
-    exit 1
-fi
+# Выводим путь к собранному APK
+echo "APK built successfully!"
+echo "APK path: $PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
