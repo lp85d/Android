@@ -79,7 +79,7 @@ EOF
 
     cat > build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.13' apply false
+    id 'com.android.application' version '8.5.2' apply false
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
