@@ -53,7 +53,7 @@ create_project_files() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
-        "app/src/main/res/menu"  # Добавляем для меню
+        "app/src/main/res/menu"
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -85,7 +85,7 @@ EOF
     # root build.gradle
     cat > build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.4.0' apply false
+    id 'com.android.application' version '8.11.1' apply false
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -131,6 +131,7 @@ EOF
     cat > gradle.properties << 'EOF'
 android.useAndroidX=true
 android.enableJetifier=true
+org.gradle.unsafe.configuration-cache=true
 EOF
     debug "Создан gradle.properties"
 
@@ -169,7 +170,7 @@ EOF
 EOF
     debug "Создан AndroidManifest.xml"
 
-    # MainActivity.java (с меню, скрытием кнопок, customUrl)
+    # MainActivity.java
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -190,16 +191,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+    private String customUrl = "https://httpbin.org/status/200";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setActionBar(toolbar);
         Button startServiceBtn = findViewById(R.id.startServiceBtn);
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
         Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
@@ -336,7 +340,7 @@ public class MainActivity extends Activity {
 EOF
     debug "Создан MainActivity.java"
 
-    # SoundService.java (с customUrl)
+    # SoundService.java
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -381,7 +385,7 @@ public class SoundService extends Service {
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
         } else {
-            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
+            customUrl = "https://httpbin.org/status/200";
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -482,25 +486,25 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
-    # activity_main.xml (с контейнером для кнопок)
+    # activity_main.xml
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
     android:background="#f5f5f5">
-    <TextView
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ParsPost"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textColor="#333333"
-        android:layout_marginBottom="32dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="ParsPost"
+        app:titleTextColor="#ffffff"
+        android:elevation="4dp" />
     <TextView
         android:id="@+id/statusText"
         android:layout_width="match_parent"
@@ -563,7 +567,7 @@ EOF
 EOF
     debug "Создан activity_main.xml"
 
-    # main_menu.xml (для меню)
+    # main_menu.xml
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
