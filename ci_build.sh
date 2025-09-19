@@ -55,7 +55,20 @@ fi
 
 # Собираем APK с подробным логом
 echo "Building APK..."
-$GRADLE_CMD clean assembleDebug --stacktrace 2>&1 | tee -a "$GITHUB_WORKSPACE/build.log"
+echo "Current directory: $(pwd)"
+echo "Gradle command: $GRADLE_CMD"
+echo "Available build files:"
+find . -name "build.gradle*" -o -name "settings.gradle*"
+
+# Проверяем структуру проекта
+echo "Project structure:"
+ls -la
+if [ -d "app" ]; then
+    echo "App directory contents:"
+    ls -la app/
+fi
+
+$GRADLE_CMD clean assembleDebug --stacktrace --info 2>&1 | tee -a "$GITHUB_WORKSPACE/build.log"
 
 # Проверяем, что APK был создан
 APK_PATH="$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
@@ -66,6 +79,12 @@ if [ -f "$APK_PATH" ]; then
 else
     echo "Error: APK not found at expected path: $APK_PATH"
     echo "Searching for APK files..."
-    find "$PROJECT_DIR" -name "*.apk" -type f
+    find "$PROJECT_DIR" -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+    echo "Build outputs directory structure:"
+    find "$PROJECT_DIR" -path "*/build/outputs*" -type d 2>/dev/null | head -10
+    echo "Gradle build directory contents:"
+    if [ -d "$PROJECT_DIR/app/build" ]; then
+        ls -la "$PROJECT_DIR/app/build/"
+    fi
     exit 1
 fi
