@@ -8,6 +8,7 @@ log() { echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}"; }
 info() { echo -e "${BLUE}[INFO] $1${NC}"; }
 debug() { echo -e "${PURPLE}[DEBUG] $1${NC}"; }
 
+# Создание тестового MP3 файла
 create_test_mp3() {
     local mp3_path="$1"
     debug "Создание MP3 файла: $mp3_path"
@@ -18,6 +19,7 @@ create_test_mp3() {
     if [ ! -f "$mp3_path" ]; then
         log "Создание тестового MP3 файла..."
         
+        # Создание мелодичного звука
         if ! ffmpeg -f lavfi -i "sine=frequency=440:duration=1,sine=frequency=554:duration=1,sine=frequency=659:duration=1" \
                    -filter_complex "concat=n=3:v=0:a=1" \
                    -ac 2 -ar 44100 -b:a 128k "$mp3_path" -y >/dev/null 2>&1; then
@@ -36,10 +38,12 @@ create_test_mp3() {
     fi
 }
 
+# Основная функция для создания всех файлов проекта
 create_project_files() {
     local project_dir="$1"
     log "Создание файлов проекта в $project_dir..."
 
+    # Создаем основную директорию проекта и необходимые подкаталоги
     mkdir -p "$project_dir"
     local dirs=(
         "app/src/main/java/com/example/mysoundapp"
@@ -49,7 +53,7 @@ create_project_files() {
         "app/src/main/res/xml"
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
-        "app/src/main/res/menu"
+        "app/src/main/res/menu"  # Добавляем для меню
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -57,6 +61,7 @@ create_project_files() {
 
     cd "$project_dir"
 
+    # settings.gradle
     cat > settings.gradle << 'EOF'
 pluginManagement {
     repositories {
@@ -77,9 +82,10 @@ include ':app'
 EOF
     debug "Создан settings.gradle"
 
+    # root build.gradle
     cat > build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.11.1' apply false
+    id 'com.android.application' version '8.4.0' apply false
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -87,6 +93,7 @@ task clean(type: Delete) {
 EOF
     debug "Создан root build.gradle"
 
+    # app/build.gradle
     cat > app/build.gradle << 'EOF'
 plugins {
     id 'com.android.application'
@@ -106,9 +113,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            debuggable true
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -116,20 +120,21 @@ android {
     }
 }
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }
 EOF
     debug "Создан app/build.gradle"
 
+    # gradle.properties
     cat > gradle.properties << 'EOF'
 android.useAndroidX=true
 android.enableJetifier=true
-org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m
 EOF
     debug "Создан gradle.properties"
 
+    # AndroidManifest.xml
     cat > app/src/main/AndroidManifest.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -164,6 +169,7 @@ EOF
 EOF
     debug "Создан AndroidManifest.xml"
 
+    # MainActivity.java (с меню, скрытием кнопок, customUrl)
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -188,7 +194,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private String customUrl = "https://httpbin.org/status/200";
+    private String customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,8 +258,7 @@ public class MainActivity extends Activity {
         }
         StringBuilder status = new StringBuilder();
         status.append("Статус службы: ").append(isServiceRunning ? "Работает ✅" : "Остановлена ❌").append("\n");
-        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅").append("\n");
-        status.append("URL сервера: ").append(customUrl);
+        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅");
         statusText.setText(status.toString());
     }
 
@@ -273,7 +278,7 @@ public class MainActivity extends Activity {
             if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
                 buttonContainer.setVisibility(View.VISIBLE);
             } else {
-                buttonContainer.setVisibility(View.GONE);
+                hideButtons();
             }
         }
     }
@@ -291,8 +296,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.action_start_service) {
+        if (item.getItemId() == R.id.action_start_service) {
             Intent startIntent = new Intent(this, SoundService.class);
             startIntent.putExtra("customUrl", customUrl);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -303,13 +307,13 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_stop_service) {
+        } else if (item.getItemId() == R.id.action_stop_service) {
             Intent stopIntent = new Intent(this, SoundService.class);
             stopService(stopIntent);
             Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_request_permission) {
+        } else if (item.getItemId() == R.id.action_request_permission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
                 if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
@@ -322,7 +326,7 @@ public class MainActivity extends Activity {
             }
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_change_url) {
+        } else if (item.getItemId() == R.id.action_change_url) {
             Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -332,6 +336,7 @@ public class MainActivity extends Activity {
 EOF
     debug "Создан MainActivity.java"
 
+    # SoundService.java (с customUrl)
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -376,7 +381,7 @@ public class SoundService extends Service {
         if (intent != null && intent.hasExtra("customUrl")) {
             customUrl = intent.getStringExtra("customUrl");
         } else {
-            customUrl = "https://httpbin.org/status/200";
+            customUrl = "https://httpbin.org/status/200"; // Значение по умолчанию
         }
         if (!isRunning) {
             startForeground(NOTIFICATION_ID, createNotification("Запуск мониторинга..."));
@@ -477,6 +482,7 @@ public class SoundService extends Service {
 EOF
     debug "Создан SoundService.java"
 
+    # activity_main.xml (с контейнером для кнопок)
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -557,6 +563,7 @@ EOF
 EOF
     debug "Создан activity_main.xml"
 
+    # main_menu.xml (для меню)
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
@@ -576,6 +583,7 @@ EOF
 EOF
     debug "Создан main_menu.xml"
 
+    # Создание тестового MP3
     create_test_mp3 "$project_dir/app/src/main/res/raw/sound.mp3"
     
     log "✅ Все файлы проекта ParsPost созданы."
