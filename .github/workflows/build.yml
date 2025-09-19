@@ -1,67 +1,53 @@
 name: Android Build CI
-
 on:
   push:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-
       - name: Install Android SDK components
         run: |
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" "platforms;android-34" "platform-tools"
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
           cache-read-only: false
-
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
       - name: Make build script executable
         run: chmod +x ./ci_build.sh
-
       - name: Build application
         run: |
           set -x
           ./ci_build.sh 2>&1 | tee build.log
         env:
           GRADLE_OPTS: "-Xmx2048m -Dorg.gradle.daemon=false"
-
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-log
           path: build.log
-
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: ParsPost/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: warn
-
       - name: Output Artifact URL
         run: echo "Artifact URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
