@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Цвета и логирование
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
@@ -9,7 +8,6 @@ log() { echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}"; }
 info() { echo -e "${BLUE}[INFO] $1${NC}"; }
 debug() { echo -e "${PURPLE}[DEBUG] $1${NC}"; }
 
-# Создание тестового MP3 файла
 create_test_mp3() {
     local mp3_path="$1"
     debug "Создание MP3 файла: $mp3_path"
@@ -20,7 +18,6 @@ create_test_mp3() {
     if [ ! -f "$mp3_path" ]; then
         log "Создание тестового MP3 файла..."
         
-        # Создание мелодичного звука
         if ! ffmpeg -f lavfi -i "sine=frequency=440:duration=1,sine=frequency=554:duration=1,sine=frequency=659:duration=1" \
                    -filter_complex "concat=n=3:v=0:a=1" \
                    -ac 2 -ar 44100 -b:a 128k "$mp3_path" -y >/dev/null 2>&1; then
@@ -39,12 +36,10 @@ create_test_mp3() {
     fi
 }
 
-# Основная функция для создания всех файлов проекта
 create_project_files() {
     local project_dir="$1"
     log "Создание файлов проекта в $project_dir..."
 
-    # Создаем директории проекта
     mkdir -p "$project_dir"
     local dirs=(
         "app/src/main/java/com/example/mysoundapp"
@@ -62,7 +57,6 @@ create_project_files() {
 
     cd "$project_dir"
 
-    # settings.gradle
     cat > settings.gradle << 'EOF'
 pluginManagement {
     repositories {
@@ -81,9 +75,7 @@ dependencyResolutionManagement {
 rootProject.name = "ParsPost"
 include ':app'
 EOF
-    debug "Создан settings.gradle"
 
-    # root build.gradle
     cat > build.gradle << 'EOF'
 plugins {
     id 'com.android.application' version '8.4.0' apply false
@@ -92,9 +84,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 EOF
-    debug "Создан root build.gradle"
 
-    # app/build.gradle
     cat > app/build.gradle << 'EOF'
 plugins {
     id 'com.android.application'
@@ -124,22 +114,18 @@ android {
     }
 }
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
 EOF
-    debug "Создан app/build.gradle"
 
-    # gradle.properties
     cat > gradle.properties << 'EOF'
 android.useAndroidX=true
 android.enableJetifier=true
 org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m
 EOF
-    debug "Создан gradle.properties"
 
-    # AndroidManifest.xml
     cat > app/src/main/AndroidManifest.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -172,9 +158,7 @@ EOF
     </application>
 </manifest>
 EOF
-    debug "Создан AndroidManifest.xml"
 
-    # MainActivity.java
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -192,6 +176,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -199,6 +184,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
+    private EditText urlInput;
     private String customUrl = "https://httpbin.org/status/200";
 
     @Override
@@ -208,8 +194,10 @@ public class MainActivity extends Activity {
         Button startServiceBtn = findViewById(R.id.startServiceBtn);
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
         Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
+        Button updateUrlBtn = findViewById(R.id.updateUrlBtn);
         statusText = findViewById(R.id.statusText);
         buttonContainer = findViewById(R.id.buttonContainer);
+        urlInput = findViewById(R.id.urlInput);
         updateStatus();
 
         startServiceBtn.setOnClickListener(v -> {
@@ -245,6 +233,16 @@ public class MainActivity extends Activity {
             }
             updateStatus();
         });
+
+        updateUrlBtn.setOnClickListener(v -> {
+            String newUrl = urlInput.getText().toString().trim();
+            if (!newUrl.isEmpty()) {
+                customUrl = newUrl;
+                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -263,7 +261,8 @@ public class MainActivity extends Activity {
         }
         StringBuilder status = new StringBuilder();
         status.append("Статус службы: ").append(isServiceRunning ? "Работает ✅" : "Остановлена ❌").append("\n");
-        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅");
+        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅").append("\n");
+        status.append("URL сервера: ").append(customUrl);
         statusText.setText(status.toString());
     }
 
@@ -283,7 +282,7 @@ public class MainActivity extends Activity {
             if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
                 buttonContainer.setVisibility(View.VISIBLE);
             } else {
-                hideButtons();
+                buttonContainer.setVisibility(View.GONE);
             }
         }
     }
@@ -301,7 +300,8 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_start_service) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_start_service) {
             Intent startIntent = new Intent(this, SoundService.class);
             startIntent.putExtra("customUrl", customUrl);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -312,13 +312,13 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (item.getItemId() == R.id.action_stop_service) {
+        } else if (itemId == R.id.action_stop_service) {
             Intent stopIntent = new Intent(this, SoundService.class);
             stopService(stopIntent);
             Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (item.getItemId() == R.id.action_request_permission) {
+        } else if (itemId == R.id.action_request_permission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
                 if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
@@ -331,17 +331,22 @@ public class MainActivity extends Activity {
             }
             updateStatus();
             return true;
-        } else if (item.getItemId() == R.id.action_change_url) {
-            Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
+        } else if (itemId == R.id.action_change_url) {
+            String newUrl = urlInput.getText().toString().trim();
+            if (!newUrl.isEmpty()) {
+                customUrl = newUrl;
+                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
+            }
+            updateStatus();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 }
 EOF
-    debug "Создан MainActivity.java"
 
-    # SoundService.java
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
 
@@ -485,9 +490,7 @@ public class SoundService extends Service {
     public IBinder onBind(Intent intent) { return null; }
 }
 EOF
-    debug "Создан SoundService.java"
 
-    # activity_main.xml
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -517,6 +520,26 @@ EOF
         android:padding="16dp"
         android:layout_marginBottom="24dp"
         android:elevation="2dp" />
+    <EditText
+        android:id="@+id/urlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Введите URL сервера"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:background="#ffffff"
+        android:layout_marginBottom="12dp"
+        android:elevation="2dp" />
+    <Button
+        android:id="@+id/updateUrlBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="12dp"
+        android:text="Обновить URL"
+        android:textSize="16sp"
+        android:background="#2196F3"
+        android:textColor="#ffffff"
+        android:elevation="4dp" />
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
@@ -566,9 +589,7 @@ EOF
         android:elevation="1dp" />
 </LinearLayout>
 EOF
-    debug "Создан activity_main.xml"
 
-    # main_menu.xml
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
@@ -586,9 +607,7 @@ EOF
         android:title="Изменить URL сервера" />
 </menu>
 EOF
-    debug "Создан main_menu.xml"
 
-    # Создание тестового MP3
     create_test_mp3 "$project_dir/app/src/main/res/raw/sound.mp3"
     
     log "✅ Все файлы проекта ParsPost созданы."
