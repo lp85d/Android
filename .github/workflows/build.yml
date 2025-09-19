@@ -28,8 +28,10 @@ jobs:
           cache-read-only: false
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Make build script executable
-        run: chmod +x ./ci_build.sh
+      - name: Make scripts executable
+        run: |
+          chmod +x ./ci_build.sh
+          chmod +x ./source.sh
       - name: Build application
         run: ./ci_build.sh 2>&1 | tee build.log
         env:
