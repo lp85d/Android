@@ -54,6 +54,7 @@ create_project_files() {
         "app/src/main/res/mipmap-hdpi"
         "app/src/main/res/mipmap-mdpi"
         "app/src/main/res/menu"
+        "gradle/wrapper"
     )
     for dir in "${dirs[@]}"; do
         mkdir -p "$project_dir/$dir"
@@ -134,6 +135,16 @@ android.enableJetifier=true
 org.gradle.unsafe.configuration-cache=true
 EOF
     debug "Создан gradle.properties"
+
+    # gradle-wrapper.properties
+    cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+EOF
+    debug "Создан gradle-wrapper.properties"
 
     # AndroidManifest.xml
     cat > app/src/main/AndroidManifest.xml << 'EOF'
