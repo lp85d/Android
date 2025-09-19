@@ -136,7 +136,7 @@ EOF
 
 # --- 3. Создание ресурсов Android (res) ---
 
-# AndroidManifest.xml
+# AndroidManifest.xml (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -152,9 +152,7 @@ cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParsPost"
         tools:targetApi="34">
@@ -614,7 +612,7 @@ cat > "$PROJECT_NAME/gradlew" << 'EOF'
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      https://www.apache.org/licenses/LICENSE-2.0
+#       https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
