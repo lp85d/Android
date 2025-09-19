@@ -16,6 +16,7 @@ mkdir -p $PROJECT_NAME/app/src/main/res/layout
 mkdir -p $PROJECT_NAME/app/src/main/res/menu
 mkdir -p $PROJECT_NAME/app/src/main/res/raw
 mkdir -p $PROJECT_NAME/gradle/wrapper
+mkdir -p $PROJECT_NAME/app/src/main/res/values
 
 # Создание settings.gradle
 cat > $PROJECT_NAME/settings.gradle << 'EOF'
@@ -100,6 +101,14 @@ zipStorePath=wrapper/dists
 EOF
 echo "[DEBUG] Создан gradle-wrapper.properties"
 
+# Создание strings.xml для app_name
+cat > $PROJECT_NAME/app/src/main/res/values/strings.xml << 'EOF'
+<resources>
+    <string name="app_name">MySoundApp</string>
+</resources>
+EOF
+echo "[DEBUG] Создан strings.xml"
+
 # Создание AndroidManifest.xml
 cat > $PROJECT_NAME/app/src/main/AndroidManifest.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -146,6 +155,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -156,6 +166,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.app.Notification;
+import android.app.NotificationManager;
 
 public class MainActivity extends AppCompatActivity {
     private TextView statusText;
@@ -209,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("MainActivity", "Creating options menu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -233,6 +246,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isServiceRunning() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            for (Notification notification : nm.getActiveNotifications()) {
+                if (notification.getId() == 1) {
+                    return true;
+                }
+            }
+            return false;
+        }
         android.app.ActivityManager am = (android.app.ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (android.app.ActivityManager.RunningServiceInfo service : am.getRunningServices(Integer.MAX_VALUE)) {
             if (SoundService.class.getName().equals(service.service.getClassName())) {
@@ -289,7 +311,7 @@ public class SoundService extends Service {
         String url = intent.getStringExtra("url");
         try {
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(url);
+            mediaPlayer.setDataSource(getResources().openRawResourceFd(R.raw.sound).getFileDescriptor());
             mediaPlayer.setOnPreparedListener(MediaPlayer::start);
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
@@ -391,7 +413,8 @@ echo "[DEBUG] Создан main_menu.xml"
 
 # Создание тестового MP3 файла
 echo "Создание тестового MP3 файла..."
-dd if=/dev/zero of=$PROJECT_NAME/app/src/main/res/raw/sound.mp3 bs=1M count=1
+# Используем ffmpeg для создания валидного MP3
+ffmpeg -f lavfi -i anullsrc=r=44100:cl=mono -t 5 -c:a mp3 $PROJECT_NAME/app/src/main/res/raw/sound.mp3
 echo "[2025-09-19 $(date +%H:%M:%S)] ✅ MP3 файл создан: $(pwd)/$PROJECT_NAME/app/src/main/res/raw/sound.mp3"
 
 echo "[2025-09-19 $(date +%H:%M:%S)] ✅ Все файлы проекта $PROJECT_NAME созданы."
