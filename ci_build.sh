@@ -19,7 +19,7 @@ fi
 
 # Создаем файлы проекта, передавая имя проекта
 echo "Creating project files..."
-./source.sh ParsPost 2>&1 | tee build.log
+bash ./source.sh ParsPost 2>&1 | tee build.log
 
 # Проверяем, что директория проекта была создана
 if [ ! -d "$PROJECT_DIR" ]; then
