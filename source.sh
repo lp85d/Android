@@ -45,6 +45,17 @@ allprojects {
         google()
         mavenCentral()
     }
+    
+    configurations.all {
+        resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22'
+        }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
 }
 EOF
 echo "[DEBUG] Создан root build.gradle"
@@ -78,11 +89,28 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
+    packagingOptions {
+        pickFirst '**/kotlin-stdlib-*.jar'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+configurations {
+    all {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core:1.9.0'
 }
 EOF
 echo "[DEBUG] Создан app/build.gradle"
@@ -101,6 +129,7 @@ org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
 org.gradle.daemon=false
 android.useAndroidX=true
 android.enableJetifier=true
+kotlin.stdlib.default.dependency=false
 EOF
 echo "[DEBUG] Создан gradle.properties"
 
