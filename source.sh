@@ -136,7 +136,7 @@ EOF
 
 # --- 3. Создание ресурсов Android (res) ---
 
-# AndroidManifest.xml (ИЗМЕНЕНО)
+# AndroidManifest.xml
 cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -146,13 +146,13 @@ cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@android:drawable/ic_media_play"
+        android:icon="@android:drawable/ic_dialog_info"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParsPost"
@@ -173,7 +173,7 @@ cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
             android:name=".SoundService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
 EOF
@@ -196,7 +196,7 @@ cat > "$PROJECT_NAME/app/src/main/res/xml/data_extraction_rules.xml" << 'EOF'
 </data-extraction-rules>
 EOF
 
-# layout/activity_main.xml
+# layout/activity_main.xml (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/res/layout/activity_main.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -225,11 +225,11 @@ cat > "$PROJECT_NAME/app/src/main/res/layout/activity_main.xml" << 'EOF'
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Status"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        tools:text="Status" />
 
     <Button
         android:id="@+id/requestPermissionBtn"
@@ -237,14 +237,36 @@ cat > "$PROJECT_NAME/app/src/main/res/layout/activity_main.xml" << 'EOF'
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/check_permissions"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/statusText" />
 
+    <ScrollView
+        android:id="@+id/logScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:background="#F5F5F5"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/statusText">
+
+        <TextView
+            android:id="@+id/logTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:fontFamily="monospace"
+            android:textColor="#333333" />
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 EOF
 
-# layout/activity_settings.xml
+# layout/activity_settings.xml (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/res/layout/activity_settings.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -256,17 +278,34 @@ cat > "$PROJECT_NAME/app/src/main/res/layout/activity_settings.xml" << 'EOF'
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/server_url_label"
-        android:labelFor="@+id/urlEditText"/>
+        android:labelFor="@+id/urlEditText"
+        android:text="@string/server_url_label" />
 
     <EditText
         android:id="@+id/urlEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:autofillHints="url"
         android:hint="@string/enter_url_hint"
-        android:inputType="textUri"
-        android:autofillHints="url" />
+        android:inputType="textUri" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:labelFor="@+id/intervalEditText"
+        android:text="@string/polling_interval_label" />
+
+    <EditText
+        android:id="@+id/intervalEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="false"
+        android:hint="@string/polling_interval_hint"
+        android:inputType="number" />
+
 
     <Button
         android:id="@+id/saveButton"
@@ -278,17 +317,19 @@ cat > "$PROJECT_NAME/app/src/main/res/layout/activity_settings.xml" << 'EOF'
 </LinearLayout>
 EOF
 
-# menu/main_menu.xml
+# menu/main_menu.xml (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/res/menu/main_menu.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_start_service"
+        android:icon="@android:drawable/ic_media_play"
         android:title="@string/start_service"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_stop_service"
+        android:icon="@android:drawable/ic_media_stop"
         android:title="@string/stop_service"
         app:showAsAction="ifRoom" />
     <item
@@ -298,7 +339,7 @@ cat > "$PROJECT_NAME/app/src/main/res/menu/main_menu.xml" << 'EOF'
 </menu>
 EOF
 
-# values/strings.xml
+# values/strings.xml (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/res/values/strings.xml" << 'EOF'
 <resources>
     <string name="app_name">ParsPost</string>
@@ -309,13 +350,16 @@ cat > "$PROJECT_NAME/app/src/main/res/values/strings.xml" << 'EOF'
     <string name="save">Сохранить</string>
     <string name="server_url_label">URL сервера:</string>
     <string name="enter_url_hint">Введите URL</string>
-    <string name="url_saved">URL сохранен</string>
+    <string name="url_saved">Настройки сохранены</string>
     <string name="service_running">Сервис запущен</string>
     <string name="service_stopped">Сервис остановлен</string>
-    <string name="battery_optimization_enabled">Оптимизация батареи: ВКЛЮЧЕНА</string>
-    <string name="battery_optimization_disabled">Оптимизация батареи: ВЫКЛЮЧЕНА (хорошо)</string>
-    <string name="notification_permission_granted">Разрешение на уведомления: ЕСТЬ (хорошо)</string>
-    <string name="notification_permission_denied">Разрешение на уведомления: НЕТ</string>
+    <string name="battery_optimization_enabled">Оптимизация батареи: ВКЛ</string>
+    <string name="battery_optimization_disabled">Оптимизация батареи: ВЫКЛ (OK)</string>
+    <string name="notification_permission_granted">Уведомления: ЕСТЬ (OK)</string>
+    <string name="notification_permission_denied">Уведомления: НЕТ</string>
+    <string name="all_permissions_granted">Все разрешения предоставлены</string>
+    <string name="polling_interval_label">Интервал опроса (секунды):</string>
+    <string name="polling_interval_hint">например, 60</string>
 </resources>
 EOF
 
@@ -333,8 +377,10 @@ cat > "$PROJECT_NAME/app/src/main/java/com/example/parspost/MainActivity.java" <
 package com.example.parspost;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -344,6 +390,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -354,22 +401,37 @@ import androidx.core.content.ContextCompat;
 
 import com.example.parspost.databinding.ActivityMainBinding;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     public static final String PREFS_NAME = "ParsPostPrefs";
     public static final String KEY_URL = "serverUrl";
-    public static final String DEFAULT_URL = "https://httpbin.org/status/200"; // Сделано public static
+    public static final String KEY_INTERVAL = "serverInterval";
+    public static final String DEFAULT_URL = "https://httpbin.org/get";
+    public static final int DEFAULT_INTERVAL = 60; // 60 секунд
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
-                }
-                updateStatus();
+                updateStatusAndUi();
             });
+
+    private final BroadcastReceiver logReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (SoundService.ACTION_LOG_UPDATE.equals(intent.getAction())) {
+                String logMessage = intent.getStringExtra(SoundService.EXTRA_LOG_MESSAGE);
+                if (logMessage != null) {
+                    String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+                    binding.logTextView.append(currentTime + ": " + logMessage + "\n\n");
+                    binding.logScrollView.post(() -> binding.logScrollView.fullScroll(View.FOCUS_DOWN));
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -383,8 +445,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateStatus();
+        updateStatusAndUi();
         invalidateOptionsMenu();
+        registerReceiver(logReceiver, new IntentFilter(SoundService.ACTION_LOG_UPDATE));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(logReceiver);
     }
 
     @Override
@@ -424,75 +493,83 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSoundService() {
+        if (!areAllPermissionsGranted()) {
+            Toast.makeText(this, "Сначала предоставьте все разрешения", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String url = prefs.getString(KEY_URL, DEFAULT_URL);
+        int interval = prefs.getInt(KEY_INTERVAL, DEFAULT_INTERVAL);
 
         Intent serviceIntent = new Intent(this, SoundService.class);
         serviceIntent.putExtra("url", url);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
+        serviceIntent.putExtra("interval", interval);
+        ContextCompat.startForegroundService(this, serviceIntent);
+
         binding.getRoot().postDelayed(() -> {
-            updateStatus();
+            updateStatusAndUi();
             invalidateOptionsMenu();
-        }, 100);
+        }, 200);
     }
 
     private void stopSoundService() {
         Intent serviceIntent = new Intent(this, SoundService.class);
         stopService(serviceIntent);
         binding.getRoot().postDelayed(() -> {
-            updateStatus();
+            updateStatusAndUi();
             invalidateOptionsMenu();
-        }, 100);
+        }, 200);
     }
 
-    private void updateStatus() {
+    private void updateStatusAndUi() {
         String serviceStatus = SoundService.isRunning ? getString(R.string.service_running) : getString(R.string.service_stopped);
+        String batteryStatus = isBatteryOptimizationIgnored() ? getString(R.string.battery_optimization_disabled) : getString(R.string.battery_optimization_enabled);
+        String notificationStatus = hasNotificationPermission() ? getString(R.string.notification_permission_granted) : getString(R.string.notification_permission_denied);
+        binding.statusText.setText(String.format("%s | %s | %s", serviceStatus, batteryStatus, notificationStatus));
+
+        if (areAllPermissionsGranted()) {
+            binding.requestPermissionBtn.setVisibility(View.GONE);
+            binding.logScrollView.setVisibility(View.VISIBLE);
+        } else {
+            binding.requestPermissionBtn.setVisibility(View.VISIBLE);
+            binding.logScrollView.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isBatteryOptimizationIgnored() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        String batteryStatus;
-        if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
-            batteryStatus = getString(R.string.battery_optimization_disabled);
-        } else {
-            batteryStatus = getString(R.string.battery_optimization_enabled);
-        }
-        String notificationStatus;
+        return pm.isIgnoringBatteryOptimizations(getPackageName());
+    }
+
+    private boolean hasNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                notificationStatus = getString(R.string.notification_permission_granted);
-            } else {
-                notificationStatus = getString(R.string.notification_permission_denied);
-            }
-        } else {
-            notificationStatus = "Разрешение на уведомления: не требуется (Android < 13)";
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
         }
-        binding.statusText.setText(String.format("%s\n%s\n%s", serviceStatus, batteryStatus, notificationStatus));
+        return true; // Разрешение не требуется для версий ниже
+    }
+
+    private boolean areAllPermissionsGranted() {
+        return isBatteryOptimizationIgnored() && hasNotificationPermission();
     }
 
     private void checkAndRequestPermissions() {
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+        if (!isBatteryOptimizationIgnored()) {
             Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
-        } else {
-             Toast.makeText(this, "Оптимизация батареи уже отключена.", Toast.LENGTH_SHORT).show();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (!hasNotificationPermission()) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            } else {
-                Toast.makeText(this, "Разрешение на уведомления уже предоставлено.", Toast.LENGTH_SHORT).show();
             }
         }
-        updateStatus();
+        binding.getRoot().postDelayed(this::updateStatusAndUi, 200);
     }
 }
 EOF
 
-# SoundService.java
+# SoundService.java (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/java/com/example/parspost/SoundService.java" << 'EOF'
 package com.example.parspost;
 
@@ -503,40 +580,127 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SoundService extends Service {
     private static final String CHANNEL_ID = "SoundServiceChannel";
     public static volatile boolean isRunning = false;
 
+    public static final String ACTION_LOG_UPDATE = "com.example.parspost.LOG_UPDATE";
+    public static final String EXTRA_LOG_MESSAGE = "log_message";
+
+    private ExecutorService executorService;
+    private Handler handler;
+    private Runnable pollingRunnable;
+    private String requestUrl;
+    private int intervalSeconds;
+
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        executorService = Executors.newSingleThreadExecutor();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) return START_NOT_STICKY;
+
         isRunning = true;
-        String url = intent.getStringExtra("url");
+        requestUrl = intent.getStringExtra("url");
+        intervalSeconds = intent.getIntExtra("interval", 60);
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Sound Service")
-                .setContentText("Service is running with URL: " + url)
-                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setContentTitle("ParsPost Service")
+                .setContentText("Сервис запущен. URL: " + requestUrl)
+                .setSmallIcon(android.R.drawable.ic_popup_sync)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
+
+        startPolling();
+        broadcastLog("Сервис запущен. Интервал: " + intervalSeconds + " сек.");
+
         return START_STICKY;
+    }
+
+    private void startPolling() {
+        pollingRunnable = new Runnable() {
+            @Override
+            public void run() {
+                performRequest();
+                handler.postDelayed(this, intervalSeconds * 1000L);
+            }
+        };
+        handler.post(pollingRunnable);
+    }
+
+    private void performRequest() {
+        executorService.execute(() -> {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(requestUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(15000); // 15 seconds
+                connection.setReadTimeout(15000); // 15 seconds
+
+                int responseCode = connection.getResponseCode();
+                StringBuilder response = new StringBuilder();
+                response.append("Код ответа: ").append(responseCode).append("\n");
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        responseCode >= 200 && responseCode < 300 ? connection.getInputStream() : connection.getErrorStream()));
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                broadcastLog(response.toString());
+
+            } catch (Exception e) {
+                broadcastLog("Ошибка: " + e.getMessage());
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        });
+    }
+
+    private void broadcastLog(String message) {
+        Intent intent = new Intent(ACTION_LOG_UPDATE);
+        intent.putExtra(EXTRA_LOG_MESSAGE, message);
+        sendBroadcast(intent);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
+        if (handler != null && pollingRunnable != null) {
+            handler.removeCallbacks(pollingRunnable);
+        }
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+        broadcastLog("Сервис остановлен.");
     }
 
     @Nullable
@@ -549,8 +713,7 @@ public class SoundService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID, "Sound Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
+            getSystemService(NotificationManager.class).createNotificationChannel(serviceChannel);
         }
     }
 }
@@ -563,8 +726,10 @@ package com.example.parspost;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.parspost.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -578,27 +743,45 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setTitle(R.string.settings);
         prefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
-        loadCurrentUrl();
-        binding.saveButton.setOnClickListener(v -> saveUrl());
+        loadCurrentSettings();
+        binding.saveButton.setOnClickListener(v -> saveSettings());
     }
 
-    private void loadCurrentUrl() {
-        // Теперь используем DEFAULT_URL из MainActivity, если URL еще не сохранен
+    private void loadCurrentSettings() {
         String currentUrl = prefs.getString(MainActivity.KEY_URL, MainActivity.DEFAULT_URL);
+        int currentInterval = prefs.getInt(MainActivity.KEY_INTERVAL, MainActivity.DEFAULT_INTERVAL);
         binding.urlEditText.setText(currentUrl);
+        binding.intervalEditText.setText(String.valueOf(currentInterval));
     }
 
-    private void saveUrl() {
+    private void saveSettings() {
         String newUrl = binding.urlEditText.getText().toString().trim();
-        if (!newUrl.isEmpty()) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(MainActivity.KEY_URL, newUrl);
-            editor.apply();
-            Toast.makeText(this, R.string.url_saved, Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
+        String intervalStr = binding.intervalEditText.getText().toString().trim();
+        int newInterval;
+
+        if (newUrl.isEmpty()) {
             binding.urlEditText.setError("URL не может быть пустым");
+            return;
         }
+
+        try {
+            newInterval = Integer.parseInt(intervalStr);
+            if (newInterval <= 0) {
+                binding.intervalEditText.setError("Интервал должен быть > 0");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            binding.intervalEditText.setError("Введите корректное число");
+            return;
+        }
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(MainActivity.KEY_URL, newUrl);
+        editor.putInt(MainActivity.KEY_INTERVAL, newInterval);
+        editor.apply();
+
+        Toast.makeText(this, R.string.url_saved, Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
 EOF
