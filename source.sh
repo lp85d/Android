@@ -75,15 +75,17 @@ dependencyResolutionManagement {
 rootProject.name = "ParsPost"
 include ':app'
 EOF
+    debug "Создан settings.gradle"
 
     cat > build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.4.0' apply false
+    id 'com.android.application' version '8.6' apply false
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
 EOF
+    debug "Создан root build.gradle"
 
     cat > app/build.gradle << 'EOF'
 plugins {
@@ -119,12 +121,14 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
 EOF
+    debug "Создан app/build.gradle"
 
     cat > gradle.properties << 'EOF'
 android.useAndroidX=true
 android.enableJetifier=true
 org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m
 EOF
+    debug "Создан gradle.properties"
 
     cat > app/src/main/AndroidManifest.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -158,6 +162,7 @@ EOF
     </application>
 </manifest>
 EOF
+    debug "Создан AndroidManifest.xml"
 
     cat > app/src/main/java/com/example/mysoundapp/MainActivity.java << 'EOF'
 package com.example.mysoundapp;
@@ -176,7 +181,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -184,7 +188,6 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private EditText urlInput;
     private String customUrl = "https://httpbin.org/status/200";
 
     @Override
@@ -194,10 +197,8 @@ public class MainActivity extends Activity {
         Button startServiceBtn = findViewById(R.id.startServiceBtn);
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
         Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
-        Button updateUrlBtn = findViewById(R.id.updateUrlBtn);
         statusText = findViewById(R.id.statusText);
         buttonContainer = findViewById(R.id.buttonContainer);
-        urlInput = findViewById(R.id.urlInput);
         updateStatus();
 
         startServiceBtn.setOnClickListener(v -> {
@@ -232,16 +233,6 @@ public class MainActivity extends Activity {
                 }
             }
             updateStatus();
-        });
-
-        updateUrlBtn.setOnClickListener(v -> {
-            String newUrl = urlInput.getText().toString().trim();
-            if (!newUrl.isEmpty()) {
-                customUrl = newUrl;
-                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
-            }
         });
     }
 
@@ -332,20 +323,14 @@ public class MainActivity extends Activity {
             updateStatus();
             return true;
         } else if (itemId == R.id.action_change_url) {
-            String newUrl = urlInput.getText().toString().trim();
-            if (!newUrl.isEmpty()) {
-                customUrl = newUrl;
-                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
-            }
-            updateStatus();
+            Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 }
 EOF
+    debug "Создан MainActivity.java"
 
     cat > app/src/main/java/com/example/mysoundapp/SoundService.java << 'EOF'
 package com.example.mysoundapp;
@@ -490,6 +475,7 @@ public class SoundService extends Service {
     public IBinder onBind(Intent intent) { return null; }
 }
 EOF
+    debug "Создан SoundService.java"
 
     cat > app/src/main/res/layout/activity_main.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -520,26 +506,6 @@ EOF
         android:padding="16dp"
         android:layout_marginBottom="24dp"
         android:elevation="2dp" />
-    <EditText
-        android:id="@+id/urlInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Введите URL сервера"
-        android:textSize="16sp"
-        android:padding="12dp"
-        android:background="#ffffff"
-        android:layout_marginBottom="12dp"
-        android:elevation="2dp" />
-    <Button
-        android:id="@+id/updateUrlBtn"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="12dp"
-        android:text="Обновить URL"
-        android:textSize="16sp"
-        android:background="#2196F3"
-        android:textColor="#ffffff"
-        android:elevation="4dp" />
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
@@ -589,6 +555,7 @@ EOF
         android:elevation="1dp" />
 </LinearLayout>
 EOF
+    debug "Создан activity_main.xml"
 
     cat > app/src/main/res/menu/main_menu.xml << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -607,9 +574,9 @@ EOF
         android:title="Изменить URL сервера" />
 </menu>
 EOF
+    debug "Создан main_menu.xml"
 
     create_test_mp3 "$project_dir/app/src/main/res/raw/sound.mp3"
     
     log "✅ Все файлы проекта ParsPost созданы."
 }
-EOF
