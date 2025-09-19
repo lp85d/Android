@@ -152,6 +152,7 @@ cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:icon="@android:drawable/ic_media_play"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParsPost"
@@ -327,7 +328,7 @@ cat > "$PROJECT_NAME/app/src/main/res/values/themes.xml" << 'EOF'
 EOF
 
 # --- 4. Создание исходного кода Java ---
-# MainActivity.java
+# MainActivity.java (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/java/com/example/parspost/MainActivity.java" << 'EOF'
 package com.example.parspost;
 
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     public static final String PREFS_NAME = "ParsPostPrefs";
     public static final String KEY_URL = "serverUrl";
-    private final String DEFAULT_URL = "https://httpbin.org/status/200";
+    public static final String DEFAULT_URL = "https://httpbin.org/status/200"; // Сделано public static
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -555,7 +556,7 @@ public class SoundService extends Service {
 }
 EOF
 
-# SettingsActivity.java
+# SettingsActivity.java (ИЗМЕНЕНО)
 cat > "$PROJECT_NAME/app/src/main/java/com/example/parspost/SettingsActivity.java" << 'EOF'
 package com.example.parspost;
 
@@ -582,7 +583,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadCurrentUrl() {
-        String currentUrl = prefs.getString(MainActivity.KEY_URL, "");
+        // Теперь используем DEFAULT_URL из MainActivity, если URL еще не сохранен
+        String currentUrl = prefs.getString(MainActivity.KEY_URL, MainActivity.DEFAULT_URL);
         binding.urlEditText.setText(currentUrl);
     }
 
