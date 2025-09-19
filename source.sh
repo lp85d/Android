@@ -790,110 +790,63 @@ EOF
 # gradlew (Linux/macOS)
 cat > "$PROJECT_NAME/gradlew" << 'EOF'
 #!/usr/bin/env sh
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
 #
-# Copyright 2015 the original author or authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#       https://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-DEFAULT_JVM_OPTS=""
-APP_NAME="Gradle"
-APP_BASE_NAME=`basename "$0"`
-MAX_FD="maximum"
-warn () {
-  echo "$*"
-}
-die () {
-  echo
-  echo "ERROR: $*"
-  echo
-  exit 1
-}
-cygwin=false
-msys=false
-darwin=false
-nonstop=false
-case "`uname`" in
-  CYGWIN* )
-    cygwin=true
-    ;;
-  Darwin* )
-    darwin=true
-    ;;
-  MINGW* )
-    msys=true
-    ;;
-  NONSTOP* )
-    nonstop=true
-    ;;
-esac
-PRG="$0"
-while [ -h "$PRG" ] ; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG=`dirname "$PRG"`"/$link"
-  fi
-done
-SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
-cd "$SAVED" >/dev/null
-if [ -z "$JAVA_HOME" ]; then
-  if $darwin; then
-    [ -x '/usr/libexec/java_home' ] && JAVA_HOME=`/usr/libexec/java_home`
-  fi
-  if [ -z "$JAVA_HOME" ]; then
-    if [ -d "$APP_HOME/jre" ]; then
-      JAVA_HOME="$APP_HOME/jre"
-    fi
-  fi
-  if [ -z "$JAVA_HOME" ]; then
-    if $darwin; then
-      if [ -d "/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/jre" ]; then
-        JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/jre"
-      fi
+
+##############################################################################
+##
+##  Gradle start up script for UN*X
+##
+##############################################################################
+
+# Determine the Java command to run.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses "$JAVA_HOME/jre/sh/java" as the preferred command over "$JAVA_HOME/bin/java".
+        JAVACMD="$JAVA_HOME/jre/sh/java"
     else
-      if [ -d "/opt/jdk1.8.0" ]; then
-        JAVA_HOME="/opt/jdk1.8.0/jre"
-      fi
+        JAVACMD="$JAVA_HOME/bin/java"
     fi
-  fi
-fi
-if [ -z "$JAVA_HOME" ]; then
-  JAVACMD="java"
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the location of your Java installation."
+    fi
 else
-  JAVACMD="$JAVA_HOME/bin/java"
+    JAVACMD="java"
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command can be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the location of your Java installation."
 fi
-if [ ! -x "$JAVACMD" ] ; then
-  die "The JAVA_HOME environment variable is not defined correctly, or java is not on your PATH."
-fi
-if [ -z "$GRADLE_OPTS" ]; then
-  GRADLE_OPTS="-Dorg.gradle.appname=$APP_BASE_NAME"
-else
-  GRADLE_OPTS="$GRADLE_OPTS -Dorg.gradle.appname=$APP_BASE_NAME"
-fi
-CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
-if [ -z "$JAVA_OPTS" ]; then
-  JVM_OPTS_ARRAY=()
-  for arg in $DEFAULT_JVM_OPTS; do
-    JVM_OPTS_ARRAY[${#JVM_OPTS_ARRAY[*]}]="$arg"
-  done
-else
-  JVM_OPTS_ARRAY=("$JAVA_OPTS")
-fi
-exec "$JAVACMD" "${JVM_OPTS_ARRAY[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+
+# Determine the script directory.
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+# Add default JVM options for the Gradle daemon. These can be overridden in the JVM arguments of a build.
+DEFAULT_JVM_OPTS="-Xmx2048m"
+
+# The classpath for the launcher.
+CLASSPATH="$SCRIPT_DIR/gradle/wrapper/gradle-wrapper.jar"
+
+# Set Gradle properties.
+export GRADLE_OPTS="$DEFAULT_JVM_OPTS $JAVA_OPTS"
+
+# Launch the Gradle build.
+exec "$JAVACMD" $GRADLE_OPTS -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
 EOF
 
 # gradlew.bat (Windows)
