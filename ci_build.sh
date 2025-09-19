@@ -18,7 +18,7 @@ cd "$PROJECT_DIR"
 
 # Настраиваем Gradle Wrapper
 echo "Setting up Gradle wrapper..."
-gradle wrapper --gradle-version="8.9"
+gradle wrapper --gradle-version="8.11.1"
 chmod +x gradlew
 
 # Собираем APK
