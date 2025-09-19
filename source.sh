@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Цвета и логирование (дублируются для автономности)
+# Цвета и логирование
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
@@ -44,7 +44,7 @@ create_project_files() {
     local project_dir="$1"
     log "Создание файлов проекта в $project_dir..."
 
-    # Создаем основную директорию проекта и необходимые подкаталоги
+    # Создаем директории проекта
     mkdir -p "$project_dir"
     local dirs=(
         "app/src/main/java/com/example/mysoundapp"
@@ -86,7 +86,7 @@ EOF
     # root build.gradle
     cat > build.gradle << 'EOF'
 plugins {
-    id 'com.android.application' version '8.6.0' apply false
+    id 'com.android.application' version '8.4.0' apply false
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -192,7 +192,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -200,7 +199,6 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private TextView statusText;
     private LinearLayout buttonContainer;
-    private EditText urlInput;
     private String customUrl = "https://httpbin.org/status/200";
 
     @Override
@@ -210,10 +208,8 @@ public class MainActivity extends Activity {
         Button startServiceBtn = findViewById(R.id.startServiceBtn);
         Button stopServiceBtn = findViewById(R.id.stopServiceBtn);
         Button requestPermissionBtn = findViewById(R.id.requestPermissionBtn);
-        Button updateUrlBtn = findViewById(R.id.updateUrlBtn);
         statusText = findViewById(R.id.statusText);
         buttonContainer = findViewById(R.id.buttonContainer);
-        urlInput = findViewById(R.id.urlInput);
         updateStatus();
 
         startServiceBtn.setOnClickListener(v -> {
@@ -249,16 +245,6 @@ public class MainActivity extends Activity {
             }
             updateStatus();
         });
-
-        updateUrlBtn.setOnClickListener(v -> {
-            String newUrl = urlInput.getText().toString().trim();
-            if (!newUrl.isEmpty()) {
-                customUrl = newUrl;
-                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -277,8 +263,7 @@ public class MainActivity extends Activity {
         }
         StringBuilder status = new StringBuilder();
         status.append("Статус службы: ").append(isServiceRunning ? "Работает ✅" : "Остановлена ❌").append("\n");
-        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅").append("\n");
-        status.append("URL сервера: ").append(customUrl);
+        status.append("Оптимизация батареи: ").append(isBatteryOptimized ? "Включена ⚠️" : "Отключена ✅");
         statusText.setText(status.toString());
     }
 
@@ -298,7 +283,7 @@ public class MainActivity extends Activity {
             if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
                 buttonContainer.setVisibility(View.VISIBLE);
             } else {
-                buttonContainer.setVisibility(View.GONE);
+                hideButtons();
             }
         }
     }
@@ -316,8 +301,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.action_start_service) {
+        if (item.getItemId() == R.id.action_start_service) {
             Intent startIntent = new Intent(this, SoundService.class);
             startIntent.putExtra("customUrl", customUrl);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -328,13 +312,13 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Служба запущена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_stop_service) {
+        } else if (item.getItemId() == R.id.action_stop_service) {
             Intent stopIntent = new Intent(this, SoundService.class);
             stopService(stopIntent);
             Toast.makeText(this, "Служба остановлена", Toast.LENGTH_SHORT).show();
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_request_permission) {
+        } else if (item.getItemId() == R.id.action_request_permission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
                 if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
@@ -347,15 +331,8 @@ public class MainActivity extends Activity {
             }
             updateStatus();
             return true;
-        } else if (itemId == R.id.action_change_url) {
-            String newUrl = urlInput.getText().toString().trim();
-            if (!newUrl.isEmpty()) {
-                customUrl = newUrl;
-                Toast.makeText(this, "URL обновлён: " + customUrl, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Введите действительный URL", Toast.LENGTH_SHORT).show();
-            }
-            updateStatus();
+        } else if (item.getItemId() == R.id.action_change_url) {
+            Toast.makeText(this, "Введите новый URL в будущем обновлении", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -540,26 +517,6 @@ EOF
         android:padding="16dp"
         android:layout_marginBottom="24dp"
         android:elevation="2dp" />
-    <EditText
-        android:id="@+id/urlInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Введите URL сервера"
-        android:textSize="16sp"
-        android:padding="12dp"
-        android:background="#ffffff"
-        android:layout_marginBottom="12dp"
-        android:elevation="2dp" />
-    <Button
-        android:id="@+id/updateUrlBtn"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="12dp"
-        android:text="Обновить URL"
-        android:textSize="16sp"
-        android:background="#2196F3"
-        android:textColor="#ffffff"
-        android:elevation="4dp" />
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
