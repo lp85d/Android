@@ -33,7 +33,7 @@ jobs:
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-version: '8.13'  # Явно указываем версию Gradle
+        gradle-version: '8.13'  # Явно указываем Gradle 8.13
         cache-read-only: false  # Разрешаем запись в кэш
 
     - name: Install dependencies
@@ -50,7 +50,7 @@ jobs:
         GRADLE_OPTS: "-Xmx2048m -Dorg.gradle.daemon=false"  # Увеличить память и отключить демона
 
     - name: Upload build log
-      if: always()  # Загружать лог всегда, не только при ошибке
+      if: always()  # Загружать лог всегда
       uses: actions/upload-artifact@v4
       with:
         name: build-log
