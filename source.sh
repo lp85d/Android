@@ -743,4 +743,329 @@ public class SoundService extends Service {
         isRunning = false;
         stopPolling();
         if (executorService != null) {
-            executorService.shutdown
+            executorService.shutdown();
+        }
+        sendLogMessage("Сервис остановлен");
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID, "ParsPost Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
+
+    private void startPolling() {
+        pollRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isRunning) {
+                    makeHttpRequest();
+                    mainHandler.postDelayed(this, pollInterval);
+                }
+            }
+        };
+        mainHandler.post(pollRunnable);
+    }
+
+    private void stopPolling() {
+        if (pollRunnable != null && mainHandler != null) {
+            mainHandler.removeCallbacks(pollRunnable);
+        }
+    }
+
+    private void makeHttpRequest() {
+        Request request = new Request.Builder()
+                .url(targetUrl)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                sendLogMessage("❌ Ошибка запроса: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    int code = response.code();
+                    String message = response.message();
+                    String body = "";
+                    
+                    if (response.body() != null) {
+                        body = response.body().string();
+                        if (body.length() > 200) {
+                            body = body.substring(0, 200) + "...";
+                        }
+                    }
+                    
+                    String emoji = (code >= 200 && code < 300) ? "✅" : "⚠️";
+                    sendLogMessage(String.format("%s %d %s | %s", emoji, code, message, body));
+                    
+                } catch (Exception e) {
+                    sendLogMessage("❌ Ошибка обработки ответа: " + e.getMessage());
+                } finally {
+                    response.close();
+                }
+            }
+        });
+    }
+
+    private void sendLogMessage(String message) {
+        Intent intent = new Intent("com.example.parspost.LOG_MESSAGE");
+        intent.putExtra("message", message);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+}
+EOF
+
+# SettingsActivity.java
+cat > "$PROJECT_NAME/app/src/main/java/com/example/parspost/SettingsActivity.java" << 'EOF'
+package com.example.parspost;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.Toast;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import com.example.parspost.databinding.ActivitySettingsBinding;
+
+public class SettingsActivity extends AppCompatActivity {
+    private ActivitySettingsBinding binding;
+    private SharedPreferences prefs;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setTitle(R.string.settings);
+        
+        prefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
+        loadCurrentSettings();
+        binding.saveButton.setOnClickListener(v -> saveSettings());
+    }
+
+    private void loadCurrentSettings() {
+        String currentUrl = prefs.getString(MainActivity.KEY_URL, MainActivity.DEFAULT_URL);
+        int currentInterval = prefs.getInt(MainActivity.KEY_INTERVAL, MainActivity.DEFAULT_INTERVAL);
+        
+        binding.urlEditText.setText(currentUrl);
+        binding.intervalEditText.setText(String.valueOf(currentInterval));
+    }
+
+    private void saveSettings() {
+        String newUrl = binding.urlEditText.getText().toString().trim();
+        String intervalText = binding.intervalEditText.getText().toString().trim();
+        
+        if (newUrl.isEmpty()) {
+            binding.urlEditText.setError("URL не может быть пустым");
+            return;
+        }
+        
+        if (intervalText.isEmpty()) {
+            binding.intervalEditText.setError("Интервал не может быть пустым");
+            return;
+        }
+        
+        int interval;
+        try {
+            interval = Integer.parseInt(intervalText);
+            if (interval < 1 || interval > 3600) {
+                binding.intervalEditText.setError(getString(R.string.invalid_interval));
+                return;
+            }
+        } catch (NumberFormatException e) {
+            binding.intervalEditText.setError(getString(R.string.invalid_interval));
+            return;
+        }
+        
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(MainActivity.KEY_URL, newUrl);
+        editor.putInt(MainActivity.KEY_INTERVAL, interval);
+        editor.apply();
+        
+        Toast.makeText(this, R.string.url_saved, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+}
+EOF
+
+# --- 5. Создание исполняемых файлов Gradle Wrapper ---
+# gradlew (Linux/macOS)
+cat > "$PROJECT_NAME/gradlew" << 'EOF'
+#!/usr/bin/env sh
+#
+# Copyright 2015 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+DEFAULT_JVM_OPTS=""
+APP_NAME="Gradle"
+APP_BASE_NAME=`basename "$0"`
+MAX_FD="maximum"
+warn () {
+    echo "$*"
+}
+die () {
+    echo
+    echo "ERROR: $*"
+    echo
+    exit 1
+}
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "`uname`" in
+  CYGWIN* )
+    cygwin=true
+    ;;
+  Darwin* )
+    darwin=true
+    ;;
+  MINGW* )
+    msys=true
+    ;;
+  NONSTOP* )
+    nonstop=true
+    ;;
+esac
+PRG="$0"
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`/" >/dev/null
+APP_HOME="`pwd -P`"
+cd "$SAVED" >/dev/null
+if [ -z "$JAVA_HOME" ]; then
+    if $darwin; then
+        [ -x '/usr/libexec/java_home' ] && JAVA_HOME=`/usr/libexec/java_home`
+    fi
+    if [ -z "$JAVA_HOME" ]; then
+        if [ -d "$APP_HOME/jre" ]; then
+            JAVA_HOME="$APP_HOME/jre"
+        fi
+    fi
+    if [ -z "$JAVA_HOME" ]; then
+        if $darwin; then
+            if [ -d "/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/jre" ]; then
+                JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/jre"
+            fi
+        else
+            if [ -d "/opt/jdk1.8.0" ]; then
+                JAVA_HOME="/opt/jdk1.8.0/jre"
+            fi
+        fi
+    fi
+fi
+if [ -z "$JAVA_HOME" ]; then
+    JAVACMD="java"
+else
+    JAVACMD="$JAVA_HOME/bin/java"
+fi
+if [ ! -x "$JAVACMD" ] ; then
+    die "The JAVA_HOME environment variable is not defined correctly, or java is not on your PATH."
+fi
+if [ -z "$GRADLE_OPTS" ]; then
+    GRADLE_OPTS="-Dorg.gradle.appname=$APP_BASE_NAME"
+else
+    GRADLE_OPTS="$GRADLE_OPTS -Dorg.gradle.appname=$APP_BASE_NAME"
+fi
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+if [ -z "$JAVA_OPTS" ]; then
+    JVM_OPTS_ARRAY=()
+    for arg in $DEFAULT_JVM_OPTS; do
+        JVM_OPTS_ARRAY[${#JVM_OPTS_ARRAY[*]}]="$arg"
+    done
+else
+    JVM_OPTS_ARRAY=("$JAVA_OPTS")
+fi
+exec "$JAVACMD" "${JVM_OPTS_ARRAY[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+EOF
+
+# gradlew.bat (Windows)
+cat > "$PROJECT_NAME/gradlew.bat" << 'EOF'
+@if "%DEBUG%" == "" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS=
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if "%ERRORLEVEL%" == "0" goto execute
+echo.
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+goto fail
+:findJavaFromJavaHome
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+if exist "%JAVA_EXE%" goto execute
+echo.
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+goto fail
+:execute
+@rem Setup the command line args
+set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
+:end
+@rem End local scope for the variables with windows NT shell
+if "%ERRORLEVEL%"=="0" goto mainEnd
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code.
+if not defined GRADLE_EXIT_CONSOLE (
+  exit /b 1
+)
+exit 1
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+:omega
+EOF
+
+# --- 6. Установка прав ---
+chmod +x "$PROJECT_NAME/gradlew"
+
+echo "Project '$PROJECT_NAME' created successfully."
