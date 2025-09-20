@@ -41,7 +41,7 @@ jobs:
           chmod +x ./ci_build.sh
           chmod +x ./source.sh
           
-      - name: Build application with full logging
+      - name: Build application with system Gradle
         run: |
           # Создаем проект
           echo "=== Creating project ==="
@@ -52,18 +52,13 @@ jobs:
           cd ParsPost
           ls -la
           
-          # Проверяем gradlew
-          if [ -f "gradlew" ]; then
-            chmod +x ./gradlew
-            echo "=== Gradle wrapper found and made executable ==="
-          else
-            echo "ERROR: gradlew not found!"
-            exit 1
-          fi
+          # Используем системный Gradle вместо wrapper
+          echo "=== Using system Gradle instead of wrapper ==="
+          gradle --version
           
           # Собираем APK с полным логом
           echo "=== Starting Gradle build ==="
-          ./gradlew clean assembleDebug --stacktrace --no-daemon 2>&1 | tee ../full_build.log
+          gradle clean assembleDebug --stacktrace --no-daemon 2>&1 | tee ../full_build.log
           
           # Проверяем результат
           if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
