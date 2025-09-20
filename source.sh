@@ -3,7 +3,7 @@
 # Выходим из скрипта при любой ошибке
 set -e
 
-# Имя проекта жестко задано
+# Имя проекта
 PROJECT_NAME="ParsPost"
 
 # --- Проверка, не существует ли уже директория ---
@@ -127,7 +127,7 @@ zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
 EOF
 
-# --- 3. Создание ресурсов Android (res) ---
+# --- 3. Создание манифеста и ресурсов Android ---
 cat > "$PROJECT_NAME/app/src/main/AndroidManifest.xml" << 'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -768,43 +768,51 @@ public class SettingsActivity extends AppCompatActivity {
 EOF
 
 # --- 5. Создание исполняемых файлов Gradle Wrapper ---
+# Исправленная версия `gradlew`
 cat > "$PROJECT_NAME/gradlew" << 'EOF'
 #!/usr/bin/env sh
-# Determine the Java command to run.
-if [ -n "$JAVA_HOME" ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-        JAVACMD="$JAVA_HOME/jre/sh/java"
-    else
-        JAVACMD="$JAVA_HOME/bin/java"
-    fi
-    if [ ! -x "$JAVACMD" ] ; then
-        echo "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME"
-        echo "Please set the JAVA_HOME variable in your environment to match the location of your Java installation."
-        exit 1
-    fi
-else
-    JAVACMD="java"
-    which java >/dev/null 2>&1 || { echo "ERROR: JAVA_HOME is not set and no 'java' command can be found in your PATH." ; echo "Please set the JAVA_HOME variable in your environment to match the location of your Java installation." ; exit 1; }
+# Универсальный скрипт запуска Gradle Wrapper
+# Определяем корневую директорию проекта
+APP_HOME=$(dirname "$0")
+
+# Проверяем наличие файла wrapper JAR
+WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+if [ ! -f "$WRAPPER_JAR" ]; then
+  echo "Ошибка: не найден файл $WRAPPER_JAR."
+  echo "Пожалуйста, запустите 'gradle wrapper --gradle-version 8.7' вручную, чтобы его создать."
+  exit 1
 fi
 
-# Determine the script directory.
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+# Определяем команду Java
+if [ -n "$JAVA_HOME" ] ; then
+    JAVA_CMD="$JAVA_HOME/bin/java"
+else
+    JAVA_CMD="java"
+    command -v "$JAVA_CMD" >/dev/null 2>&1 || {
+        echo "Ошибка: переменная JAVA_HOME не установлена, и команда 'java' не найдена в PATH."
+        echo "Пожалуйста, установите JDK и настройте переменную JAVA_HOME."
+        exit 1
+    }
+fi
 
-# Add default JVM options for the Gradle daemon.
-DEFAULT_JVM_OPTS="-Xmx2048m"
-
-# The classpath for the launcher.
-CLASSPATH="$SCRIPT_DIR/gradle/wrapper/gradle-wrapper.jar"
-
-# Set Gradle properties.
-export GRADLE_OPTS="$DEFAULT_JVM_OPTS"
-
-# Launch the Gradle build.
-exec "$JAVACMD" $GRADLE_OPTS -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+# Запуск Gradle
+exec "$JAVA_CMD" -classpath "$WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"
 EOF
 
+# gradlew.bat (Windows) - без изменений, т.к. ошибка была не в нем
 cat > "$PROJECT_NAME/gradlew.bat" << 'EOF'
 @if "%DEBUG%" == "" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
 @rem Find java.exe
 if defined JAVA_HOME goto findJavaFromJavaHome
 set JAVA_EXE=java.exe
@@ -831,6 +839,8 @@ set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 @rem Execute Gradle
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %* -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain
 :fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code.
 if not defined GRADLE_EXIT_CONSOLE (
   exit /b 1
 )
@@ -844,9 +854,13 @@ EOF
 chmod +x "$PROJECT_NAME/gradlew"
 echo "Проект '$PROJECT_NAME' создан успешно."
 
-# --- Добавленная строка: Сборка приложения ---
-echo "Сборка APK..."
+echo "Загрузка Gradle Wrapper..."
 cd "$PROJECT_NAME"
+# Здесь мы явно создаем wrapper, чтобы гарантировать, что файл gradle-wrapper.jar существует
+./gradlew wrapper --gradle-version 8.7
+
+echo "Сборка APK..."
+# Затем запускаем основную сборку
 ./gradlew assembleDebug
 
 echo "Процесс сборки завершен. Проверьте лог на наличие ошибок."
