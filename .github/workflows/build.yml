@@ -43,7 +43,11 @@ jobs:
           
       - name: Build application (errors and warnings only)
         run: |
-          ./ci_build.sh 2>&1 | grep -E "(ERROR:|FAILED:|FAILURE:|Warning:|Deprecated|BUILD SUCCESSFUL|BUILD FAILED)" | tee build.log || true
+          # Создаем проект и собираем APK
+          ./source.sh
+          cd ParsPost
+          chmod +x ./gradlew
+          ./gradlew clean assembleDebug 2>&1 | grep -E "(ERROR:|FAILED:|FAILURE:|Warning:|Deprecated|BUILD SUCCESSFUL|BUILD FAILED)" | tee ../build.log || true
         env:
           GRADLE_OPTS: "-Xmx2048m -Dorg.gradle.daemon=false -q"
           
