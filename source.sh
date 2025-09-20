@@ -138,6 +138,12 @@ zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
 EOF
 
+# Создание минимального gradle-wrapper.jar (фиктивный файл для работы скрипта)
+# В реальности этот файл должен скачиваться автоматически, но для CI создадим пустышку
+mkdir -p "$PROJECT_NAME/gradle/wrapper"
+echo "# Gradle Wrapper JAR placeholder" > "$PROJECT_NAME/gradle/wrapper/gradle-wrapper.jar"
+echo "# This file will be downloaded by Gradle automatically" >> "$PROJECT_NAME/gradle/wrapper/gradle-wrapper.jar"
+
 # --- 3. Создание ресурсов Android (res) ---
 
 # AndroidManifest.xml
